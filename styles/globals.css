@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-gray-100
+    }
+
+}
+
+@layer components {
+    .preview code:not(div>code) {
+        @apply bg-gray-200 rounded px-1 font-mono font-thin text-sm
+    }
+
+    .preview img {
+        @apply block max-w-full max-h-[calc(50vh+180px)] m-5 mx-auto rounded
+    }
+
+    .preview a {
+        @apply text-blue-700 underline
+    }
+
+    .preview h1 {
+        @apply font-bold text-4xl my-2
+    }
+
+    .preview h2 {
+        @apply font-bold text-3xl my-3
+    }
+
+    .preview h3 {
+        @apply font-bold text-2xl my-2
+    }
+
+    .preview h4 {
+        @apply font-bold text-xl my-2
+    }
+
+    .preview h5 {
+        @apply font-bold text-lg my-2
+    }
+
+    .preview h6 {
+        @apply font-bold my-2
+    }
+
+    .preview ul {
+        @apply list-disc ml-6 my-2
+    }
+
+    .preview ol {
+        @apply list-decimal ml-6 my-2
+    }
+
+    .preview blockquote {
+        @apply border-l-[6px] pl-3 bg-gray-100 border-gray-300 my-2
+    }
+
+    .preview hr {
+        @apply w-1/4 ml-[37.5%] h-1 rounded border border-gray-300 my-2
+    }
+
+    .preview>pre>div {
+        @apply scrollbar scrollbar-track-gray-50 scrollbar-w-thin scrollbar-thumb-gray-300
+    }
+
+    .preview>p {
+        @apply py-1
+    }
+
+}
+
+
+@layer utilities {
+    .scrollbar-w-thin::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    .scrollbar-w-thin::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+    }
+
+    .scrollbar-w-thin::-webkit-scrollbar-thumb:vertical:hover {
+        background-color: gray;
+    }
+
+    .scrollbar-w-thin::-webkit-scrollbar-thumb:horizontal:hover {
+        background-color: gray;
+    }
+
+    .preview>pre>div {
+        white-space: pre-wrap;
+    }
+}
