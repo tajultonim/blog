@@ -8,6 +8,15 @@ import Link from "next/link";
 
 interface Props {
   posts: PostType[];
+  tags: TagType[];
+}
+
+interface TagType {
+  id: string;
+  title: string;
+  description: string;
+  cover: string;
+  color: string;
 }
 
 interface PostType {
@@ -26,10 +35,10 @@ interface PostType {
 
 type RelativeTimeFormatUnit = any;
 
-const Home: NextPage<Props> = ({ posts }) => {
+const Home: NextPage<Props> = ({ posts, tags }) => {
   return (
     <>
-      <Layout Sidebar={<DefaultSidebar />}>
+      <Layout Sidebar={<DefaultSidebar tags={tags} />}>
         <div className="grid gap-2">
           {posts.map((post) => (
             <Post key={post.slug} data={post} />
@@ -71,7 +80,7 @@ const Post = ({ data }: { data: PostType }) => {
   }).format(-secs, dur);
 
   return (
-    <Link href={"/" + data.slug}>
+    <Link href={"/post/" + data.slug}>
       <div className="border bg-white rounded-md w-full">
         <div className=" flex flex-col w-full">
           <div className="flex justify-center items-center relative w-full aspect-[2] rounded">
@@ -159,9 +168,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .select(
       "title,description,slug,cover,author(name,display_profile,username),created_at,word"
     );
+  let tagsres = await supabase.from("tags").select("*");
+  if (error || tagsres.error) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
       posts: data,
+      tags: tagsres.data,
     },
   };
 };

@@ -1,7 +1,7 @@
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
-import PostLayout from "../components/Layout/PostLayout";
+import PostLayout from "../../components/Layout/PostLayout";
 import Image from "next/legacy/image";
-import supabase from "../supabase/init";
+import supabase from "../../supabase/init";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";

@@ -17,7 +17,15 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 
-const Sidebar: FC = () => {
+interface TagType {
+  id: string;
+  title: string;
+  description: string;
+  cover: string;
+  color: string;
+}
+
+const Sidebar: FC<{ tags?: TagType[] }> = ({ tags }) => {
   return (
     <>
       <SidebarOption Icon={FcHome} title="Home" dest="/" />
@@ -58,25 +66,15 @@ const Sidebar: FC = () => {
       </div>
       <div className=" mt-2 mb-1 font-semibold">Popular Tags</div>
       <div className="overflow-y-scroll h-[30rem]">
-        {[
-          "html",
-          "css",
-          "javascript",
-          "typescript",
-          "next-js",
-          "rest",
-          "api",
-          "node-js",
-          "graphql",
-          "cms",
-          "web",
-          "database",
-          "firebase",
-          "vercel",
-          "react",
-        ].map((tag) => (
-          <SidebarOption key={tag} title={"#" + tag} dest={"/t/" + tag} />
-        ))}
+        {tags ? (
+          tags
+            .map((t) => t.title)
+            .map((tag) => (
+              <SidebarOption key={tag} title={"#" + tag} dest={"/t/" + tag} />
+            ))
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );

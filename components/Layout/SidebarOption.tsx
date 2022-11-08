@@ -10,7 +10,7 @@ const SidebarOption: FC<{
     <Link href={dest}>
       <div className=" group flex w-full items-center hover:bg-slate-200 rounded-sm py-1.5 pl-2">
         {Icon && <Icon />}
-        <p className="  ml-1 text-gray-700">{title}</p>
+        <p className="  ml-1 group-hover:text-blue-600 text-gray-700">{title}</p>
       </div>
     </Link>
   );

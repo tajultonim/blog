@@ -30,7 +30,7 @@ export default async function handler(
     });
 
     const options: UploadApiOptions = {
-      upload_preset: "articleimg",
+      upload_preset: "tagimg",
     };
 
     const result = await cloudinary.uploader.upload(req.body.file, options);

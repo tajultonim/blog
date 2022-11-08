@@ -2,6 +2,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import verifier from "../../../jwt/jwtverifier";
 import supabase from "../../../supabase/init";
 
+interface TagType {
+  id: string;
+  title: string;
+  description: string;
+  cover: string;
+  color: string;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -36,14 +44,27 @@ export default async function handler(
             .replace(/[^\w]/g, " ")
             .replace(/\s\s+/g, " ")
             .trim()
-            .replace(/" "/g, "-"),
-        draft_description: body.description || body.content.slice(0, 200).replace(/(\r\n|\n|\r)/gm, ""),
+            .replace(/ /g, "-"),
+        draft_description:
+          body.description ||
+          body.content.slice(0, 200).replace(/(\r\n|\n|\r)/gm, ""),
         edited_at: new Date().toISOString(),
         hasdraft: true,
       })
       .eq("id", body.id)
       .eq("author_id", verres.payload.claims.id)
       .select();
+
+    if (body.tags.length) {
+      let tres = await supabase.from("posts_tags").upsert(
+        body.tags.slice(0,4).map((id: string) => {
+          return { post_id: npres.data![0].id, tag_id: id };
+        })
+      );
+      if (tres.error) {
+        console.log(tres.error);
+      }
+    }
 
     if (npres.error) {
       // console.log("nperr", npres);
