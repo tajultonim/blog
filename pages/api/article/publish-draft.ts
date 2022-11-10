@@ -63,6 +63,23 @@ export default async function handler(
         .status(500)
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
+
+    let revalidateres = await fetch(
+      process.env.VERCEL_URL +
+        "/api/revalidate?token=" +
+        process.env.SITE_SECRET_TOKEN +
+        "&path=" +
+        encodeURIComponent("/post/" + opost.draft_slug)
+    ).then((r) => r.json());
+
+    if (!revalidateres.revalidated) {
+      return res.status(201).json({
+        status: "success",
+        code: 200,
+        message: "Success with revalidation error!",
+      });
+    }
+
     return res.status(200).json({
       status: "success",
       code: 200,

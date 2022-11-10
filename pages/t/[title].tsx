@@ -3,7 +3,7 @@ import supabase from "../../supabase/init";
 import Layout from "../../components/Layout";
 import { FC } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "next/legacy/image";
 
 interface TagType {
   title: string;
@@ -37,17 +37,18 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
     return ptsarr.indexOf(item) == pos;
   });
 
+  let stylestr = "";
+  ptsarr.forEach((t) => {
+    stylestr += `.tag-${t.title}:hover{
+    background-color: ${t.color}26;
+    border-color: ${t.color}CC;
+  }
+  `;
+  });
+
   return (
     <>
-      <style>
-        {ptsarr.map((t) => {
-          return `.tag-${t.title}:hover{
-                    background-color: ${t.color}26;
-                    border-color: ${t.color}CC;
-                  }
-                  `;
-        })}
-      </style>
+      <style>{stylestr}</style>
       <Layout
         TopBar={
           <TopBar
@@ -90,6 +91,7 @@ const TopBar: FC<{
           quality={50}
           alt={title}
           layout="fill"
+          objectFit="contain"
           src={cover}
         />
       </div>
@@ -124,26 +126,26 @@ const Post = ({ data }: { data: PostType }) => {
     (new Date().getTime() - new Date(data.created_at).getTime()) / 1000
   );
   let dur: RelativeTimeFormatUnit = "seconds";
+  // if (secs >= 60) {
+  secs = Math.round(secs / 60);
+  dur = secs == 1 ? "minute" : "minutes";
   if (secs >= 60) {
     secs = Math.round(secs / 60);
-    dur = secs == 1 ? "minute" : "minutes";
-    if (secs >= 60) {
-      secs = Math.round(secs / 60);
-      dur = secs == 1 ? "hour" : "hours";
-      if (secs >= 24) {
-        secs = Math.round(secs / 24);
-        dur = secs == 1 ? "day" : "days";
-        if (secs >= 30) {
-          secs = Math.round(secs / 30);
-          dur = secs == 1 ? "month" : "months";
-          if (secs >= 12) {
-            secs = Math.round(secs / 12);
-            dur = secs == 1 ? "year" : "years";
-          }
+    dur = secs == 1 ? "hour" : "hours";
+    if (secs >= 24) {
+      secs = Math.round(secs / 24);
+      dur = secs == 1 ? "day" : "days";
+      if (secs >= 30) {
+        secs = Math.round(secs / 30);
+        dur = secs == 1 ? "month" : "months";
+        if (secs >= 12) {
+          secs = Math.round(secs / 12);
+          dur = secs == 1 ? "year" : "years";
         }
       }
     }
   }
+  // }
 
   let month = new Intl.DateTimeFormat("en-GB", { month: "short" }).format(
     new Date(data.created_at).getTime()
@@ -164,8 +166,9 @@ const Post = ({ data }: { data: PostType }) => {
       <div className=" flex flex-col w-full">
         <div className="px-4 pb-4">
           <div className=" flex mt-1 w-full items-center">
-            <div className="relative w-6 h-6 ">
-              <Link href={"/author/" + data.author.username}>
+            {" "}
+            <Link href={"/author/" + data.author.username}>
+              <div className="relative w-6 h-6 ">
                 <Image
                   alt={data.author.name}
                   src={data.author.display_profile}
@@ -174,9 +177,8 @@ const Post = ({ data }: { data: PostType }) => {
                   className=" rounded-full"
                   quality={100}
                 />
-              </Link>
-            </div>
-
+              </div>{" "}
+            </Link>
             <div className=" pl-2 py-1 flex-1 flex flex-col justify-between ">
               <Link href={"/author/" + data.author.username}>
                 <h3 className=" hover:text-blue-700 text-gray-900 text-sm font-semibold">

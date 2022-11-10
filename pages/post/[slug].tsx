@@ -35,6 +35,7 @@ interface PostType {
     display_profile: string;
     username: string;
     twitter: string;
+    facebook: string;
   };
   tags: { title: string; color: string }[];
 }
@@ -88,22 +89,39 @@ const Post: NextPage<Props> = ({ post }) => {
           name="description"
           content={post.description.replace(/(\r\n|\n|\r)/gm, "")}
         />
-        <meta name="twitter:card" content="summary" />
+
+        {/* twitter */}
+
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={post.title} />
         <meta
           name="twitter:description"
           content={post.description.replace(/(\r\n|\n|\r)/gm, "")}
         />
         <meta name="twitter:image" content={post.cover} />
+        <meta name="twitter:creator" content={"@" + post.author.twitter} />
+        <meta name="twitter:site" content="@tajultonim" />
+
+        {/* facebook */}
         <meta property="og:title" content={post.title} />
         <meta
           property="og:description"
           content={post.description.replace(/(\r\n|\n|\r)/gm, "")}
         />
         <meta property="og:image" content={post.cover} />
+        <meta property="og:image:secure_url" content={post.cover} />
         <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="article" />
+        <meta property="og:image:alt" content={post.title} />
+        <meta
+          property="article:published_time"
+          content={new Date(post.created_at).toISOString()}
+        />
+        <meta property="article:author" content={post.author.facebook} />
+        <meta property="og:site_name" content="TajulTonim Blog" />
+        <meta property="fb:app_id" content="531198521796306" />
       </Head>
-      
+
       <PostLayout
         Sidebar={
           <>
@@ -396,7 +414,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     let { data, error } = await supabase
       .from("posts")
       .select(
-        "title,description,content,slug,cover,author(name,display_profile,username,twitter),created_at,word,tags(title,color)"
+        "title,description,content,slug,cover,author(name,display_profile,username,twitter,facebook),created_at,word,tags(title,color)"
       )
       .eq("slug", context.params?.slug);
     if (error || !data) {

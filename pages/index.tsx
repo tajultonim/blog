@@ -56,14 +56,15 @@ const Home: NextPage<Props> = ({ posts, tags }) => {
         border-color: ${tag.color}CC;
     }`;
   });
+
   return (
     <>
       <style>{styletxt}</style>
       <Layout
         Sidebar={<DefaultSidebar tags={tags} />}
-        RightSidebar={<RightSidebar tags={tags} />}
+        // RightSidebar={<RightSidebar tags={tags} />}
       >
-        <div className="grid gap-2">
+        <div className="grid gap-4">
           {posts.map((post, i) => (
             <Post i={i} key={post.slug} data={post} />
           ))}
@@ -121,6 +122,7 @@ const Post = ({ data, i }: { data: PostType; i: number }) => {
             <Image
               alt={data.title}
               src={data.cover}
+              sizes=""
               layout="fill"
               objectFit="cover"
               className=" rounded-t"
@@ -255,6 +257,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .from("tags")
     .select("*,posts(title,slug,word)")
     .order("title", { ascending: true });
+
 
   if (error || tagsres.error) {
     return {

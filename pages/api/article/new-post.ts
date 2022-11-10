@@ -67,7 +67,7 @@ export default async function handler(
     }
     if (body.tags.length) {
       let tres = await supabase.from("posts_tags").upsert(
-        body.tags.slice(0,4).map((id: string) => {
+        body.tags.slice(0, 4).map((id: string) => {
           return { post_id: data[0].id, tag_id: id };
         })
       );
@@ -75,7 +75,30 @@ export default async function handler(
         console.log(tres.error);
       }
     }
-    console.log(data);
+    let revalidateres = await fetch(
+      process.env.VERCEL_URL +
+        "/api/revalidate?token=" +
+        process.env.SITE_SECRET_TOKEN +
+        "&path=" +
+        encodeURIComponent(
+          "/post/" + body.slug ||
+            body.title
+              .toLowerCase()
+              .replace(/[^\w]/g, " ")
+              .replace(/\s\s+/g, " ")
+              .trim()
+              .replace(/ /g, "-")
+        )
+    ).then((r) => r.json());
+
+    if (!revalidateres.revalidated) {
+      return res.status(201).json({
+        status: "success",
+        code: 200,
+        message: "Success with revalidation error!",
+      });
+    }
+
     return res.status(200).json({
       status: "success",
       code: 200,

@@ -41,7 +41,7 @@ const Header: FC<{ fixed?: boolean }> = ({ fixed }) => {
                   if (e.key === "Enter" || e.keyCode === 13) {
                     router.push({
                       pathname: "/search",
-                      query: { q: queryText },
+                      query: { q: queryText, type: "posts" },
                     });
                   }
                 }}
@@ -53,7 +53,7 @@ const Header: FC<{ fixed?: boolean }> = ({ fixed }) => {
                 onClick={() => {
                   router.push({
                     pathname: "/search",
-                    query: { q: queryText },
+                    query: { q: queryText, type: "posts" },
                   });
                 }}
               >

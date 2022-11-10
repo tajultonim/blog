@@ -308,7 +308,7 @@ const Id: NextPage<{ post: Post; alltags: TagType[] }> = ({
       setIsUnpublishing(true);
       let res = await fetch("/api/article/unpublish", {
         method: "POST",
-        body: JSON.stringify({ id: post.id }),
+        body: JSON.stringify({ id: post.id, slug: post.slug }),
       }).then((r) => r.json());
       setIsUnpublishing(false);
       localStorage.removeItem(post.id);
@@ -325,7 +325,7 @@ const Id: NextPage<{ post: Post; alltags: TagType[] }> = ({
       setIsDeleting(true);
       let res = await fetch("/api/article/delete", {
         method: "DELETE",
-        body: JSON.stringify({ id: post.id }),
+        body: JSON.stringify({ id: post.id, slug: post.slug }),
       }).then((r) => r.json());
       setIsDeleting(false);
       localStorage.removeItem(post.id);
@@ -730,7 +730,7 @@ const Id: NextPage<{ post: Post; alltags: TagType[] }> = ({
                   alt=""
                   src={cover}
                   className=" rounded-t-lg"
-                  objectFit="contain"
+                  objectFit="cover"
                   layout="fill"
                 />
               </div>
