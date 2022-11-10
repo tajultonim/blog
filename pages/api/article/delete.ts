@@ -41,7 +41,8 @@ export default async function handler(
     }
 
     let revalidateres = await fetch(
-      process.env.VERCEL_URL +
+      "https://" +
+        process.env.VERCEL_URL +
         "/api/revalidate?token=" +
         process.env.SITE_SECRET_TOKEN +
         "&path=" +

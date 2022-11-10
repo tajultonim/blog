@@ -36,8 +36,10 @@ export default async function handler(
         .status(500)
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
+
     let revalidateres = await fetch(
-      process.env.VERCEL_URL +
+      "https://" +
+        process.env.VERCEL_URL +
         "/api/revalidate?token=" +
         process.env.SITE_SECRET_TOKEN +
         "&path=" +
