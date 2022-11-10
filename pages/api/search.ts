@@ -24,7 +24,7 @@ export default async function handler(
             .select(
               "title,slug,created_at,word,tags(title,color),author(name,display_profile,username)"
             )
-            .textSearch("title", req.query.q as string)
+            .textSearch("title", `'${req.query.q as string}'`)
         : await supabase
             .from("tags")
             .select("title,color")

@@ -5,6 +5,7 @@ import DefaultSidebar from "../components/Layout/DefaultSidebar";
 import supabase from "../supabase/init";
 import Image from "next/legacy/image";
 import Link from "next/link";
+import Head from "next/head";
 
 interface Props {
   posts: PostType[];
@@ -59,6 +60,12 @@ const Home: NextPage<Props> = ({ posts, tags }) => {
 
   return (
     <>
+      <Head>
+        <meta
+          name="facebook-domain-verification"
+          content="17feoonrfhqenwtfaw98urwul9b813"
+        />
+      </Head>
       <style>{styletxt}</style>
       <Layout
         Sidebar={<DefaultSidebar tags={tags} />}
@@ -257,7 +264,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .from("tags")
     .select("*,posts(title,slug,word)")
     .order("title", { ascending: true });
-
 
   if (error || tagsres.error) {
     return {
