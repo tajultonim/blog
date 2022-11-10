@@ -2,8 +2,12 @@ import { FC } from "react";
 import Image from "next/legacy/image";
 import { BsSearch } from "react-icons/bs";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 const Header: FC<{ fixed?: boolean }> = ({ fixed }) => {
+  const [queryText, setQueryText] = useState("");
+  const router = useRouter();
   return (
     <>
       <header
@@ -29,11 +33,29 @@ const Header: FC<{ fixed?: boolean }> = ({ fixed }) => {
                 id="voice-search"
                 className="border pr-10 h-9 rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 outline-blue-500"
                 placeholder="Search"
+                value={queryText}
+                onChange={(e) => {
+                  setQueryText(e.target.value);
+                }}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter" || e.keyCode === 13) {
+                    router.push({
+                      pathname: "/search",
+                      query: { q: queryText },
+                    });
+                  }
+                }}
               />
               <button
                 type="button"
                 aria-label="search"
                 className="flex h-[calc(2.25rem-3px)] hover:bg-slate-200 rounded-r-md absolute inset-y-0 right-0 items-center pr-3 pl-3 mt-[3px] mr-[1px]"
+                onClick={() => {
+                  router.push({
+                    pathname: "/search",
+                    query: { q: queryText },
+                  });
+                }}
               >
                 <BsSearch />
               </button>

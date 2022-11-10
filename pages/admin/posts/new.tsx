@@ -182,7 +182,7 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
         })
           .then(async (r) => {
             let res = await r.json();
-            console.log(res);
+            // console.log(res);
             setIsUploadingImage(false);
             if (!signal.aborted) {
               let imgurl = res.url;
@@ -638,9 +638,16 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
                       </code>
                     );
                   },
+                  table(props) {
+                    return (
+                      <div className=" my-2 overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-md rounded">
+                        <table>{props.children}</table>
+                      </div>
+                    );
+                  },
                 }}
               >
-                {content.replace(/\n/gi, " \n\n").trim()}
+                {content}
               </ReactMarkdown>
             </div>
           </div>

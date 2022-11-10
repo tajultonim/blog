@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/legacy/image";
 import DashboardLayout from "../../../components/Layout/DashboardLayout";
 import supabase from "../../../supabase/init";
-import { AiFillDelete } from "react-icons/ai";
+import { FaEdit } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -51,27 +51,12 @@ const Tags: NextPage<Props> = ({ tags }) => {
 };
 
 const Tag = ({ title, description, cover, id, color }: TagType) => {
-  const router = useRouter();
-  async function handleDeleteTag() {
-    let res = await fetch("/api/tag/delete", {
-      method: "DELETE",
-      body: JSON.stringify({ id }),
-    }).then((res) => res.json());
-    if (res.code == 200) {
-      router.reload();
-    } else {
-      alert("Something went wrong!");
-    }
-  }
   return (
     <>
       <div className=" mt-2 flex overflow-hidden w-full bg-white rounded items-center p-2 hover:shadow-sm hover:bg-blue-50 cursor-pointer relative group">
-        <AiFillDelete
-          onClick={async () => {
-            await handleDeleteTag();
-          }}
-          className="absolute z-10 top-2 right-2 text-gray-400 opacity-0 group-hover:opacity-100 duration-100 hover:text-gray-700"
-        />
+        <Link href={"/admin/tags/edit/" + id}>
+          <FaEdit className="absolute z-10 top-2 right-2 text-gray-400 opacity-0 group-hover:opacity-100 duration-100 hover:text-gray-700" />
+        </Link>
         <div className="relative h-20 aspect-square">
           <Image
             alt=""

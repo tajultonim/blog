@@ -65,7 +65,7 @@ const Sidebar: FC<{ tags?: TagType[] }> = ({ tags }) => {
         />
       </div>
       <div className=" mt-2 mb-1 font-semibold">Popular Tags</div>
-      <div className="overflow-y-scroll h-[30rem]">
+      <div className="overflow-y-scroll scrollbar scrollbar-track-gray-50 scrollbar-w-thin scrollbar-thumb-gray-300 h-[30rem]">
         {tags ? (
           tags
             .map((t) => t.title)

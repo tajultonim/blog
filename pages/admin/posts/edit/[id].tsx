@@ -763,10 +763,7 @@ const Id: NextPage<{ post: Post; alltags: TagType[] }> = ({
                         PreTag="div"
                         {...props}
                       >
-                        {String(children)
-                          .replace(/  \n\n/gi, "\n")
-                          .replace(/\n$/, "")
-                          .trim()}
+                        {String(children).replace(/\n$/, "")}
                       </SyntaxHighlighter>
                     ) : (
                       <code className={className} {...props}>
@@ -774,9 +771,16 @@ const Id: NextPage<{ post: Post; alltags: TagType[] }> = ({
                       </code>
                     );
                   },
+                  table(props) {
+                    return (
+                      <div className=" my-2 overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-md rounded">
+                        <table>{props.children}</table>
+                      </div>
+                    );
+                  },
                 }}
               >
-                {content.replace(/\n/gi, "  \n\n").trim()}
+                {content}
               </ReactMarkdown>
             </div>
           </div>

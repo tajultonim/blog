@@ -17,6 +17,11 @@ interface TagType {
   description: string;
   cover: string;
   color: string;
+  posts: {
+    title: string;
+    slug: string;
+    word: number;
+  }[];
 }
 
 interface PostType {
@@ -31,17 +36,36 @@ interface PostType {
     display_profile: string;
     username: string;
   };
+  tags: {
+    title: string;
+    color: string;
+  }[];
 }
 
 type RelativeTimeFormatUnit = any;
 
 const Home: NextPage<Props> = ({ posts, tags }) => {
+  let styletxt = "";
+  tags.forEach((tag) => {
+    styletxt += `.tag-${tag.title} span{
+      color: ${tag.color};
+    }
+    
+    .tag-${tag.title}:hover{
+        background-color: ${tag.color}26;
+        border-color: ${tag.color}CC;
+    }`;
+  });
   return (
     <>
-      <Layout Sidebar={<DefaultSidebar tags={tags} />}>
+      <style>{styletxt}</style>
+      <Layout
+        Sidebar={<DefaultSidebar tags={tags} />}
+        RightSidebar={<RightSidebar tags={tags} />}
+      >
         <div className="grid gap-2">
-          {posts.map((post) => (
-            <Post key={post.slug} data={post} />
+          {posts.map((post, i) => (
+            <Post i={i} key={post.slug} data={post} />
           ))}
         </div>
       </Layout>
@@ -49,7 +73,7 @@ const Home: NextPage<Props> = ({ posts, tags }) => {
   );
 };
 
-const Post = ({ data }: { data: PostType }) => {
+const Post = ({ data, i }: { data: PostType; i: number }) => {
   let secs = Math.round(
     (new Date().getTime() - new Date(data.created_at).getTime()) / 1000
   );
@@ -75,14 +99,24 @@ const Post = ({ data }: { data: PostType }) => {
     }
   }
 
-  let postedAt = new Intl.RelativeTimeFormat("en", {
-    numeric: "auto",
-  }).format(-secs, dur);
+  let month = new Intl.DateTimeFormat("en-GB", { month: "short" }).format(
+    new Date(data.created_at).getTime()
+  );
+
+  let postedAt =
+    month +
+    " " +
+    new Date(data.created_at).getDate() +
+    " (" +
+    new Intl.RelativeTimeFormat("en", {
+      numeric: "auto",
+    }).format(-secs, dur) +
+    ")";
 
   return (
-    <Link href={"/post/" + data.slug}>
-      <div className="border bg-white rounded-md w-full">
-        <div className=" flex flex-col w-full">
+    <div className="border bg-white rounded-md w-full">
+      <div className=" flex flex-col w-full">
+        <Link href={"/post/" + data.slug}>
           <div className="flex justify-center items-center relative w-full aspect-[2] rounded">
             <Image
               alt={data.title}
@@ -90,12 +124,14 @@ const Post = ({ data }: { data: PostType }) => {
               layout="fill"
               objectFit="cover"
               className=" rounded-t"
+              priority={i < 2}
             />
           </div>
-          <div className="px-4 pb-4">
-            <div className=" flex mt-1 w-full items-center">
-              {/* <Link href={"/a/" + data.author.username}> */}
-              <div className="relative w-10 h-10 ">
+        </Link>
+        <div className="px-4 pb-4">
+          <div className=" flex mt-1 w-full items-center">
+            <Link href={"/author/" + data.author.username}>
+              <div className="relative w-6 h-6 ">
                 <Image
                   alt={data.author.name}
                   src={data.author.display_profile}
@@ -103,28 +139,50 @@ const Post = ({ data }: { data: PostType }) => {
                   objectFit="cover"
                   className=" rounded-full"
                   quality={100}
+                  priority={i < 2}
                 />
               </div>
-              {/* </Link> */}
-              <div className=" pl-3 py-1 flex-1 flex flex-col justify-between ">
-                <h3 className=" text-2xl font-bold">{data.title}</h3>
-                <div className=" text-xs">
-                  {data.author.name} • {postedAt}
-                </div>
-              </div>
+            </Link>
+            <div className=" pl-2 py-1 flex-1 flex flex-col justify-between ">
+              <Link href={"/author/" + data.author.username}>
+                <h3 className=" hover:text-blue-700 text-gray-900 text-sm font-semibold">
+                  {data.author.name}
+                </h3>
+              </Link>
+
+              <div className=" text-gray-900 -mt-[2px] text-xs">{postedAt}</div>
             </div>
-            <div className=" w-full line-clamp-2 text-sm">
+          </div>
+          <Link href={"/post/" + data.slug}>
+            <div className=" text-3xl font-bold -mt-1 mb-1 pl-8">
+              {data.title}
+            </div>
+          </Link>
+          <div className=" ml-8 flex mb-1">
+            {data.tags.map((t) => (
+              <Link href={"/t/" + t.title} key={t.title}>
+                <div
+                  className={` tag-${t.title} border border-transparent px-1 rounded text-sm`}
+                >
+                  <span className=" mr-1">#</span>
+                  {t.title}
+                </div>
+              </Link>
+            ))}
+          </div>
+          <Link href={"/post/" + data.slug}>
+            <div className=" pl-8 w-full line-clamp-2 text-sm">
               {data.description}
             </div>
-            <div className="relative mt-5">
-              <div className=" absolute right-0 bottom-0 text-xs">
-                {Math.round(data.word / 250)} min read
-              </div>
+          </Link>
+          <div className="relative mt-5">
+            <div className=" absolute right-0 bottom-0 text-xs">
+              {Math.round(data.word / 250)} min read
             </div>
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
@@ -162,13 +220,42 @@ const PostSkaleton: FC = () => {
   );
 };
 
+export const RightSidebar: FC<{ tags: TagType[] }> = ({ tags }) => {
+  return (
+    <div className=" gap-2 flex flex-col mt-2">
+      {tags.map((t) => (
+        <div key={t.title} className="bg-white rounded p-2">
+          <Link href={"/t/" + t.title}>
+            <div className=" hover:text-blue-700 text-lg font-bold text-gray-800">
+              #{t.title}
+            </div>
+          </Link>
+          {t.posts.map((p) => (
+            <Link key={p.slug + t.title} href={"/post/" + p.slug}>
+              <div className=" group mb-1">
+                <div className=" py-1 group-hover:text-blue-700">{p.title}</div>
+                <div className=" text-xs -mt-2">
+                  {Math.round(p.word / 250)} min read
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
 export const getStaticProps: GetStaticProps = async (context) => {
   let { data, error } = await supabase
     .from("posts")
     .select(
-      "title,description,slug,cover,author(name,display_profile,username),created_at,word"
+      "title,description,slug,cover,author(name,display_profile,username),created_at,word,tags(title)"
     );
-  let tagsres = await supabase.from("tags").select("*");
+  let tagsres = await supabase
+    .from("tags")
+    .select("*,posts(title,slug,word)")
+    .order("title", { ascending: true });
+
   if (error || tagsres.error) {
     return {
       notFound: true,

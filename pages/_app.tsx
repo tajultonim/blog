@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
           name="description"
           content="Hey, it's Tonim. It's my personal blog. I share educational stuff here."
         />
-        <link rel="icon" href="/icon.svg" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Component {...pageProps} />
     </>

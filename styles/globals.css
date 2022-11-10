@@ -70,6 +70,30 @@
         @apply py-1
     }
 
+    .preview table {
+        @apply min-w-full divide-y divide-gray-300 border-collapse
+    }
+
+    .preview thead {
+        @apply bg-gray-100
+    }
+
+    .preview th {
+        @apply py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900
+    }
+
+    .preview tbody {
+        @apply divide-y divide-gray-200 bg-white
+    }
+
+    .preview td {
+        @apply whitespace-nowrap px-3 pl-4 py-4 text-sm
+    }
+
+
+
+
+
 }
 
 
