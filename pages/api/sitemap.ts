@@ -16,11 +16,11 @@ export default async function handler(
     .from("pages")
     .select("slug,edited_at,created_at")
     .eq("ispublished", true);
-  let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://${process.env.VERCEL_URL}</loc><lastmod>${new Date().toISOString()}</lastmod></url>`;
+  let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://${process.env.SITE_URL}</loc><lastmod>${new Date().toISOString()}</lastmod></url>`;
   postres.data?.forEach((post) => {
     xml += `
     <url>
-        <loc>https://${process.env.VERCEL_URL + "/post/" + post.slug}</loc>
+        <loc>https://${process.env.SITE_URL + "/post/" + post.slug}</loc>
         <lastmod>${
           post.edited_at
             ? new Date(post.edited_at).toISOString()
@@ -32,7 +32,7 @@ export default async function handler(
   tagres.data?.forEach((tag) => {
     xml += `
     <url>
-        <loc>https://${process.env.VERCEL_URL + "/t/" + tag.title}</loc>
+        <loc>https://${process.env.SITE_URL + "/t/" + tag.title}</loc>
         <lastmod>${new Date(tag.created_at).toISOString()}</lastmod>
     </url>`;
   });
@@ -40,7 +40,7 @@ export default async function handler(
   pageres.data?.forEach((page) => {
     xml += `
     <url>
-        <loc>https://${process.env.VERCEL_URL + "/post/" + page.slug}</loc>
+        <loc>https://${process.env.SITE_URL + "/post/" + page.slug}</loc>
         <lastmod>${
           page.edited_at
             ? new Date(page.edited_at).toISOString()
@@ -53,12 +53,12 @@ export default async function handler(
   //   const xml = `<?xml version="1.0" encoding="UTF-8"?>
   //   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   //   <url>
-  //     <loc>https://${process.env.VERCEL_URL}</loc>
+  //     <loc>https://${process.env.SITE_URL}</loc>
   //     <lastmod>2021-01-01</lastmod>
   //   </url>
   //   ${postres.data?.map(
   //     (post) => `<url>
-  //     <loc>https://${process.env.VERCEL_URL + "/post/" + post.slug}</loc>
+  //     <loc>https://${process.env.SITE_URL + "/post/" + post.slug}</loc>
   //     <lastmod>${
   //       post.edited_at
   //         ? new Date(post.edited_at).toISOString()
@@ -69,14 +69,14 @@ export default async function handler(
 
   //   ${tagres.data?.map(
   //     (tag) => `<url>
-  //   <loc>https://${process.env.VERCEL_URL + "/t/" + tag.title}</loc>
+  //   <loc>https://${process.env.SITE_URL + "/t/" + tag.title}</loc>
   //     <lastmod>${new Date(tag.created_at).toISOString()}</lastmod>
   //   </url>`
   //   )}
 
   //   ${pageres.data?.map(
   //     (page) => `<url>
-  //     <loc>https://${process.env.VERCEL_URL + "/page/" + page.slug}</loc>
+  //     <loc>https://${process.env.SITE_URL + "/page/" + page.slug}</loc>
   //     <lastmod>${
   //       post.edited_at
   //         ? new Date(page.edited_at).toISOString()
