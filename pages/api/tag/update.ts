@@ -53,6 +53,12 @@ export default async function handler(
         .status(500)
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
+
+    try {
+      await res.revalidate("/t/" + body.title);
+    } catch (err) {
+      console.log(err);
+    }
     console.log(data);
     return res.status(200).json({
       status: "success",
