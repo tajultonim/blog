@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>TajulTonim | Personal Blog</title>
+        <title>TajulTonim - Personal Blog</title>
         <meta
           name="description"
           content="Hey, it's Tonim. It's my personal blog. I share educational stuff here."

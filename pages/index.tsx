@@ -69,7 +69,7 @@ const Home: NextPage<Props> = ({ posts, tags }) => {
       <style>{styletxt}</style>
       <Layout
         Sidebar={<DefaultSidebar tags={tags} />}
-        // RightSidebar={<RightSidebar tags={tags} />}
+        RightSidebar={<RightSidebar tags={tags} />}
       >
         <div className="grid gap-4">
           {posts.map((post, i) => (
@@ -232,25 +232,26 @@ const PostSkaleton: FC = () => {
 export const RightSidebar: FC<{ tags: TagType[] }> = ({ tags }) => {
   return (
     <div className=" gap-2 flex flex-col mt-2">
-      {tags.map((t) => (
-        <div key={t.title} className="bg-white rounded p-2">
-          <Link href={"/t/" + t.title}>
-            <div className=" hover:text-blue-700 text-lg font-bold text-gray-800">
-              #{t.title}
-            </div>
-          </Link>
-          {t.posts.map((p) => (
-            <Link key={p.slug + t.title} href={"/post/" + p.slug}>
-              <div className=" group mb-1">
-                <div className=" py-1 group-hover:text-blue-700">{p.title}</div>
-                <div className=" text-xs -mt-2">
-                  {Math.round(p.word / 250)} min read
-                </div>
+      {tags.map((t) =>
+        t.posts.length ? (
+          <div key={t.title} className="bg-white rounded p-2">
+            <Link href={"/t/" + t.title}>
+              <div className=" hover:text-blue-700 text-lg font-bold text-gray-800">
+                #{t.title}
               </div>
             </Link>
-          ))}
-        </div>
-      ))}
+            {t.posts.map((p) => (
+              <Link key={p.slug + t.title} href={"/post/" + p.slug}>
+                <div className=" group mb-1">
+                  <div className=" group-hover:text-blue-700">{p.title}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div key={t.title}></div>
+        )
+      )}
     </div>
   );
 };
@@ -259,7 +260,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .from("posts")
     .select(
       "title,description,slug,cover,author(name,display_profile,username),created_at,word,tags(title)"
-    );
+    )
+    .eq("ispublished", true);
   let tagsres = await supabase
     .from("tags")
     .select("*,posts(title,slug,word)")

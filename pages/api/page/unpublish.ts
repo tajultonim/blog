@@ -13,27 +13,27 @@ export default async function handler(
         .status(403)
         .json({ code: 403, status: "error", message: "Method not allowed!" });
     }
+
     if (!body.id) {
       return res.status(400).json({ message: "Bad request!" });
     }
 
     let token = req.cookies["access_token"] as string;
     let verres = await verifier(token);
-    if (verres.status != "success" || !verres.payload?.claims?.id) {
+    if (verres.status != "success" || !verres.payload?.claims?.admin) {
       return res.status(401).json({ message: "Invalid token!" });
     }
 
     const { data, error } = await supabase
-      .from("posts")
+      .from("pages")
       .update({
         ispublished: false,
       })
-      .eq("author_id", verres.payload.claims.id)
       .eq("id", body.id)
-      .select("slug,tags(title)")
+      .select("slug")
       .single();
 
-    if (error) {
+    if (error || !data) {
       console.log(error);
       return res
         .status(500)
@@ -41,14 +41,7 @@ export default async function handler(
     }
 
     try {
-      await res.revalidate("/post/" + data.slug);
-      await res.revalidate("/");
-      let tags: any = data.tags || [];
-      if (tags.length) {
-        tags.forEach(async (t: any) => {
-          await res.revalidate("/t/" + t.title);
-        });
-      }
+      await res.revalidate("/p/" + data.slug);
     } catch (error) {
       console.log(error);
     }
@@ -56,7 +49,8 @@ export default async function handler(
     return res.status(200).json({
       status: "success",
       code: 200,
-      message: "Post unpublished successfully",
+      message: "Page updated successfully",
+      data,
     });
   } catch (err) {
     console.log(err);

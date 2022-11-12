@@ -4,6 +4,7 @@ import Layout from "../../components/Layout";
 import { FC } from "react";
 import Link from "next/link";
 import Image from "next/legacy/image";
+import Head from "next/head";
 
 interface TagType {
   title: string;
@@ -48,6 +49,9 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
 
   return (
     <>
+      <Head>
+        <title>{`${data.title} - TajulTonim`}</title>
+      </Head>
       <style>{stylestr}</style>
       <Layout
         TopBar={
@@ -59,9 +63,11 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
           />
         }
       >
-        {data.posts.map((p) => (
-          <Post key={p.slug} data={p} />
-        ))}
+        <div className=" flex flex-col gap-3">
+          {data.posts.map((p) => (
+            <Post key={p.slug} data={p} />
+          ))}
+        </div>
       </Layout>
     </>
   );

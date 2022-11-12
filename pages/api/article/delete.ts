@@ -26,13 +26,17 @@ export default async function handler(
     const delrel = await supabase
       .from("posts_tags")
       .delete()
-      .eq("post_id", body.id);
+      .eq("post_id", body.id)
+      .select("tags(title)");
 
     const { data, error } = await supabase
       .from("posts")
       .delete()
       .eq("author_id", verres.payload?.claims.id)
-      .eq("id", body.id);
+      .eq("id", body.id)
+      .select("slug,ispublished")
+      .single();
+
     if (error) {
       console.log(error);
       return res
@@ -40,21 +44,18 @@ export default async function handler(
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
 
-    let revalidateres = await fetch(
-      "https://" +
-        process.env.VERCEL_URL +
-        "/api/revalidate?token=" +
-        process.env.SITE_SECRET_TOKEN +
-        "&path=" +
-        encodeURIComponent("/post/" + body.slug)
-    ).then((r) => r.json());
-
-    if (!revalidateres.revalidated) {
-      return res.status(201).json({
-        status: "success",
-        code: 200,
-        message: "Success with revalidation error!",
-      });
+    if (data.ispublished) {
+      try {
+        await res.revalidate("/post/" + data.slug);
+        await res.revalidate("/");
+        if (delrel.data?.length) {
+          delrel.data.forEach(async (t: any) => {
+            await res.revalidate("/t/" + t.tags!.title);
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     return res.status(200).json({

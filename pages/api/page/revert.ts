@@ -8,55 +8,63 @@ export default async function handler(
 ) {
   try {
     let body = JSON.parse(req.body);
-    if (req.method != "POST") {
+    if (req.method != "PATCH") {
       return res
         .status(403)
         .json({ code: 403, status: "error", message: "Method not allowed!" });
     }
+
     if (!body.id) {
       return res.status(400).json({ message: "Bad request!" });
     }
 
     let token = req.cookies["access_token"] as string;
     let verres = await verifier(token);
-    if (verres.status != "success" || !verres.payload?.claims?.id) {
+    if (verres.status != "success" || !verres.payload?.claims?.admin) {
       return res.status(401).json({ message: "Invalid token!" });
     }
 
-    const { data, error } = await supabase
-      .from("posts")
-      .update({
-        ispublished: false,
-      })
-      .eq("author_id", verres.payload.claims.id)
+    let opage = await supabase
+      .from("pages")
+      .select("slug,title,description,content")
       .eq("id", body.id)
-      .select("slug,tags(title)")
       .single();
 
-    if (error) {
+    if (opage.error || !opage.data) {
+      console.log(opage.error);
+      return res
+        .status(500)
+        .json({ status: "error", code: 500, message: "Something went wrong!" });
+    }
+
+    let npage = {
+      draft_slug: opage.data.slug,
+      draft_title: opage.data.title,
+      draft_description: opage.data.description,
+      draft_content: opage.data.content,
+      edited_at: new Date().toISOString(),
+      hasdraft: true,
+    };
+
+    const { data, error } = await supabase
+      .from("pages")
+      .update(npage)
+      .eq("id", body.id)
+      .select("*")
+      .single();
+
+    if (error || !data) {
       console.log(error);
       return res
         .status(500)
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
 
-    try {
-      await res.revalidate("/post/" + data.slug);
-      await res.revalidate("/");
-      let tags: any = data.tags || [];
-      if (tags.length) {
-        tags.forEach(async (t: any) => {
-          await res.revalidate("/t/" + t.title);
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
     return res.status(200).json({
       status: "success",
       code: 200,
-      message: "Post unpublished successfully",
+      message: "Page reverted successfully",
+      data,
     });
   } catch (err) {
     console.log(err);

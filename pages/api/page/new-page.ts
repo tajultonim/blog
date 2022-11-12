@@ -14,7 +14,7 @@ export default async function handler(
         .json({ code: 403, status: "error", message: "Method not allowed!" });
     }
 
-    if (!body.content || !body.title || !body.cover) {
+    if (!body.content || !body.title || !body.slug || !body.description) {
       console.log(body);
 
       return res.status(400).json({ message: "Bad request!" });
@@ -22,39 +22,26 @@ export default async function handler(
 
     let token = req.cookies["access_token"] as string;
     let verres = await verifier(token);
-    if (verres.status != "success") {
+    if (verres.status != "success" || !verres.payload?.claims?.admin) {
       return res.status(401).json({ message: "Invalid token!" });
     }
 
     const { data, error } = await supabase
-      .from("posts")
+      .from("pages")
       .insert([
         {
           content: body.content,
           draft_content: null,
           draft_title: null,
-          draft_cover: null,
           draft_slug: null,
           draft_description: null,
           title: body.title.replace(/(\r\n|\n|\r)/gm, ""),
-          slug:
-            body.slug ||
-            body.title
-              .toLowerCase()
-              .replace(/[^\w]/g, " ")
-              .replace(/\s\s+/g, " ")
-              .trim()
-              .replace(/ /g, "-"),
-          cover: body.cover,
-          description:
-            body.description ||
-            body.content.slice(0, 200).replace(/(\r\n|\n|\r)/gm, ""),
-          author_id: verres.payload?.claims?.id,
-          word: body.content.split(" ").length,
-          published_at: new Date().toISOString(),
+          slug: body.slug,
+          description: body.description.replace(/(\r\n|\n|\r)/gm, ""),
           edited_at: new Date().toISOString(),
-          ispublished: true,
+          published_at: new Date().toISOString(),
           hasdraft: false,
+          ispublished: true,
         },
       ])
       .select("id,slug")
@@ -66,25 +53,9 @@ export default async function handler(
         .status(500)
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
-    if (body.tags.length) {
-      let tres = await supabase
-        .from("posts_tags")
-        .upsert(
-          body.tags.slice(0, 4).map((id: string) => {
-            return { post_id: data.id, tag_id: id };
-          })
-        )
-        .select("tags(title)");
-      if (tres.error) {
-        console.log(tres.error);
-      }
-      tres.data?.forEach(async (t: any, i) => {
-        await res.revalidate("/t/" + t.tags!.title);
-      });
-    }
+
     try {
-      await res.revalidate("/post/" + data.slug);
-      await res.revalidate("/");
+      await res.revalidate("/p/" + data.slug);
     } catch (error) {
       console.log(error);
     }
@@ -92,7 +63,7 @@ export default async function handler(
     return res.status(200).json({
       status: "success",
       code: 200,
-      message: "Post published successfully",
+      message: "Page published successfully",
       data,
     });
   } catch (err) {

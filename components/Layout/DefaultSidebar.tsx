@@ -29,14 +29,18 @@ const Sidebar: FC<{ tags?: TagType[] }> = ({ tags }) => {
   return (
     <>
       <SidebarOption Icon={FcHome} title="Home" dest="/" />
-      <SidebarOption Icon={FcAbout} title="About" dest="/about" />
+      <SidebarOption Icon={FcAbout} title="About" dest="/p/about" />
       <SidebarOption
         Icon={FcVoicePresentation}
         title="Contact"
         dest="/contact"
       />
-      <SidebarOption Icon={FcPrivacy} title="Privacy Policy" dest="/privacy" />
-      <SidebarOption Icon={FcSupport} title="Report" dest="/report" />
+      <SidebarOption
+        Icon={FcPrivacy}
+        title="Privacy Policy"
+        dest="/p/privacy"
+      />
+      <SidebarOption Icon={FcSupport} title="Report" dest="/p/report" />
       <div className=" flex w-full justify-around mt-2">
         <SocialLink
           name="Twitter"

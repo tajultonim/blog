@@ -1,4 +1,4 @@
-import { NextPage, GetStaticProps } from "next";
+import { NextPage } from "next";
 import Head from "next/head";
 import DashboardLayout from "../../../components/Layout/DashboardLayout";
 import {
@@ -14,7 +14,6 @@ import {
   RiDoubleQuotesL,
   RiCodeFill,
   RiCodeBoxLine,
-  RiCloseLine,
   RiFlashlightLine,
   RiImageFill,
   RiUnderline,
@@ -23,117 +22,33 @@ import {
   RiMore2Fill,
   RiSettingsLine,
 } from "react-icons/ri";
-import {
-  FC,
-  useState,
-  useRef,
-  ChangeEvent,
-  useEffect,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import { FC, useState, useRef, ChangeEvent, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import atomDark from "react-syntax-highlighter/dist/cjs/styles/prism/atom-dark";
-import Image from "next/legacy/image";
 import { useRouter } from "next/router";
-import Link from "next/link";
-import getSession from "../../../jwt/getsession";
-import { parse } from "cookie";
-import supabase from "../../../supabase/init";
-import Fuse from "fuse.js";
 
 const theme: any = atomDark;
 
-interface Post {
-  id: string;
-  created_at: string;
-  title: string;
-  description: string;
-  cover: string;
-  slug: string;
-  content: string;
-  word: number;
-  author_id: string;
-  edited_at: string;
-  published_at: string;
-  draft_slug: string;
-  draft_description: string;
-  draft_content: string;
-  draft_title: string;
-  draft_cover: string;
-  ispublished: boolean;
-  hasdraft: boolean;
-  tags: TagType[];
-}
-interface TagType {
-  id: string;
-  title: string;
-  description: string;
-  cover: string;
-  color: string;
-}
-
-const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
+const New: NextPage = () => {
   const [moreToolOpen, setMoreToolOpen] = useState(false);
   const [postOptionsOpen, setPostOptionsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(true);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [isCoverUploading, setisCoverUploading] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
-  const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [cover, setCover] = useState("");
   const [description, setDescription] = useState("");
-  const [newtagname, setNewtagname] = useState("");
-  const [tags, setTags] = useState<TagType[]>([]);
-  const [authorName, setAuthorName] = useState("");
   const controller = new AbortController();
   const signal = controller.signal;
   const textareael = useRef<any>(null);
   const fileinput = useRef<any>(null);
-  const coverinput = useRef<any>(null);
   const router = useRouter();
-  const fuse = new Fuse(alltags, {
-    keys: ["title"],
-  });
-  function handleCoverImageChange(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.files?.length) {
-      let file = e.target.files[0];
-      var reader = new FileReader();
-      reader.onload = async function () {
-        let str = reader.result as string;
-        const url = "/api/article/image/upload";
-        setisCoverUploading(true);
-        fetch(url, {
-          method: "POST",
-          body: JSON.stringify({ file: str }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then(async (r) => {
-            let res = await r.json();
-            setisCoverUploading(false);
-            if (!signal.aborted) {
-              let imgurl = res.url;
-              localStorageUpdate("cover", imgurl);
-              setCover(imgurl);
-            }
-          })
-          .catch((err) => {
-            setisCoverUploading(false);
-            console.log(err);
-          });
-      };
-      reader.readAsDataURL(file);
-    }
-  }
+
   function handleBold() {
     insertAtCursor(textareael.current, "**", "**");
   }
@@ -170,7 +85,7 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
       var reader = new FileReader();
       reader.onload = async function () {
         let str = reader.result as string;
-        const url = "/api/article/image/upload";
+        const url = "/api/page/image/upload";
         setIsUploadingImage(true);
         fetch(url, {
           method: "POST",
@@ -202,23 +117,21 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
   async function handlePublishPost() {
     try {
       setIsPublishing(true);
-      let localpost = JSON.parse(localStorage.getItem("draft") || "{}");
-      let post = {
-        content: localpost.content,
-        title: localpost.title,
-        cover: localpost.cover,
-        slug: localpost.slug,
-        tags: localpost.tags.map((t: TagType) => t.id),
-        description: localpost.description || localpost.content.slice(0, 200),
+      let localpage = JSON.parse(localStorage.getItem("draft-page") || "{}");
+      let page = {
+        content: localpage.content,
+        title: localpage.title,
+        slug: localpage.slug,
+        description: localpage.description,
       };
-      let res = await fetch("/api/article/new-post", {
+      let res = await fetch("/api/page/new-page", {
         method: "POST",
-        body: JSON.stringify(post),
+        body: JSON.stringify(page),
       }).then((r) => r.json());
       setIsPublishing(false);
-      localStorage.setItem("draft", "{}");
+      localStorage.setItem("draft-page", "{}");
       console.log(res);
-      router.push("/admin/posts");
+      router.push("/admin/pages");
     } catch (error) {
       setIsPublishing(false);
       console.log(error);
@@ -228,22 +141,26 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
   async function handleSaveDraft() {
     try {
       setIsSavingDraft(true);
-      let localpost = JSON.parse(localStorage.getItem("draft") || "{}");
-      let post = {
-        content: localpost.content,
-        title: localpost.title,
-        cover: localpost.cover,
-        slug: localpost.slug,
-        tags: localpost.tags.map((t: TagType) => t.id),
+      let localpage = JSON.parse(localStorage.getItem("draft-page") || "{}");
+      let page = {
+        content: localpage.content,
+        title: localpage.title,
+        slug: localpage.slug,
+        description: localpage.description,
       };
-      let res = await fetch("/api/article/new-draft", {
+
+      let res = await fetch("/api/page/new-draft", {
         method: "POST",
-        body: JSON.stringify(post),
+        body: JSON.stringify(page),
       }).then((r) => r.json());
+
       setIsSavingDraft(false);
-      localStorage.setItem("draft", "{}");
-      console.log(res);
-      router.push("/admin/posts");
+      if (res.code !== 200) {
+        alert("Something missing");
+        return console.log(res);
+      }
+      localStorage.setItem("draft-page", "{}");
+      router.push("/admin/pages");
     } catch (error) {
       setIsSavingDraft(false);
       console.log(error);
@@ -268,28 +185,14 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
   }
 
   useEffect(() => {
-    setAuthorName(getSession(parse(document.cookie).access_token).name);
     if (localStorage) {
-      let draft: any = localStorage.getItem("draft");
+      let draft: any = localStorage.getItem("draft-page");
       if (draft) {
         draft = JSON.parse(draft);
         setContent(draft.content || "");
         setTitle(draft.title || "");
-        setSlug(
-          draft.slug
-            ? draft.slug
-            : draft.title
-            ? draft.title
-                .toLowerCase()
-                .replace(/[^\w]/g, " ")
-                .replace(/\s\s+/g, " ")
-                .trim()
-                .replace(/ /g, "-")
-            : ""
-        );
-        setCover(draft.cover || "");
+        setSlug(draft.slug || "");
         setDescription(draft.description || "");
-        setTags(draft.tags || []);
       }
     }
   }, []);
@@ -297,10 +200,10 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
   return (
     <>
       <Head>
-        <title>New Post | TajulTonim</title>
+        <title>New Page | TajulTonim</title>
       </Head>
       <DashboardLayout
-        pageId="posts"
+        pageId="pages"
         Header={() => {
           return (
             <div className=" flex w-full justify-between">
@@ -343,147 +246,19 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
       >
         <div className=" bg-white rounded-lg mt-6 mb-4 flex-1 flex flex-col overflow-hidden">
           <div className={`flex-1 ${isEditing ? "flex" : "hidden"} flex-col`}>
-            <div className=" px-10 mt-10">
-              {!isCoverUploading && !cover ? (
-                <button
-                  className=" border-2 rounded p-1 px-2"
-                  onClick={() => {
-                    coverinput.current.click();
-                  }}
-                >
-                  Add a cover image
-                </button>
-              ) : cover ? (
-                <div className=" flex items-center gap-5">
-                  <div className=" relative w-1/4 aspect-video rounded">
-                    <Image
-                      className="rounded"
-                      src={cover}
-                      layout="fill"
-                      objectFit="contain"
-                      alt=""
-                    />
-                  </div>
-                  <div className=" gap-2 flex">
-                    <button
-                      onClick={() => {
-                        coverinput.current.click();
-                      }}
-                      className=" border-2 hover:bg-blue-100 rounded p-1 px-2"
-                    >
-                      Change
-                    </button>
-                    <button
-                      className=" text-red-500 hover:bg-blue-50 rounded p-1 px-2"
-                      onClick={() => {
-                        setCover("");
-                        localStorageUpdate("cover", "");
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className=" flex gap-2 items-center">
-                  <AiOutlineLoading className=" animate-spin text-blue-500" />
-                  <p className=" text-b"> Uploading image...</p>{" "}
-                </div>
-              )}
-              <input
-                ref={coverinput}
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleCoverImageChange}
-              />
-            </div>
-
-            <div className=" p-2 px-10">
+            <div className=" pt-2 px-10">
               <input
                 onChange={(e) => {
                   localStorageUpdate("title", e.target.value);
                   setTitle(e.target.value);
                 }}
                 value={title}
-                className=" w-full font-black p-3 h-20 text-3xl xl:text-4xl outline-none placeholder:text-gray-600"
-                placeholder="New post title here ..."
+                className=" w-full font-black pt-3 h-20 text-3xl xl:text-4xl outline-none placeholder:text-gray-600"
+                placeholder="New page title here ..."
               />
             </div>
 
-            <div className=" flex w-full px-10 items-center relative">
-              {tags.map((t) => (
-                <Tag tags={tags} key={t.id} setTags={setTags} tag={t}></Tag>
-              ))}
-              <div className=" -mt-5 rounded-lg items-center flex text-sm pr-1 py-[2px] pl-2 mr-2 ">
-                <input
-                  value={newtagname}
-                  disabled={tags.length >= 4}
-                  onChange={(e) => {
-                    setNewtagname(e.target.value);
-                  }}
-                  onFocus={() => {
-                    setIsSuggestionOpen(true);
-                  }}
-                  onBlur={(e) => {
-                    setTimeout(function () {
-                      setIsSuggestionOpen(false);
-                    }, 300);
-                  }}
-                  className="outline-none"
-                  placeholder={tags.length >= 4 ? "" : "Add another"}
-                />
-              </div>
-
-              <div
-                className={`absolute z-50 bg-white border rounded p-3 top-2 ${
-                  isSuggestionOpen ? "" : " invisible"
-                }`}
-              >
-                <div className="">
-                  {(fuse
-                    .search(newtagname)
-                    .map((ts) => ts.item)
-                    .filter((at) => {
-                      let said = tags.map((t) => t.id);
-                      return !said.includes(at.id);
-                    }).length
-                    ? fuse
-                        .search(newtagname)
-                        .map((ts) => ts.item)
-                        .filter((at) => {
-                          let said = tags.map((t) => t.id);
-                          return !said.includes(at.id);
-                        })
-                    : alltags.filter((at) => {
-                        let said = tags.map((t) => t.id);
-                        return !said.includes(at.id);
-                      })
-                  ).map((t) => (
-                    <div
-                      key={t.id}
-                      onClick={() => {
-                        setTags((prevs) => {
-                          localStorageUpdate("tags", [...prevs, t]);
-                          return [...prevs, t];
-                        });
-                      }}
-                      className=" py-2 w-full max-w-sm group cursor-pointer"
-                    >
-                      <div className=" group-hover:text-blue-500">
-                        <span className={`mr-1`} style={{ color: t.color }}>
-                          #
-                        </span>
-                        {t.title}
-                      </div>
-                      <div className="">{t.description}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="toolbar px-10 bg-gray-50 my-3 p-1 justify-between flex w-full">
+            <div className="toolbar px-10 bg-gray-50 my-2 p-1 justify-between flex w-full">
               <div className="flex  gap-2 ">
                 <Toolbar Icon={AiOutlineBold} fun={handleBold} tip="Bold" />
                 <Toolbar
@@ -591,31 +366,12 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
               isEditing ? "hidden" : "flex"
             }  flex-col overflow-y-scroll`}
           >
-            {cover && (
-              <div className="relative w-full min-w-full aspect-video bg-black mt-10 rounded-t-lg">
-                <Image
-                  src={cover}
-                  className=" rounded-t-lg"
-                  objectFit="contain"
-                  layout="fill"
-                  alt=""
-                />
-              </div>
-            )}
-            <h1 className="w-full font-black p-3 pl-0 min-h-20 text-3xl xl:text-4xl outline-none">
+            <h1 className="w-full font-black pt-3 pl-0 min-h-20 text-3xl xl:text-4xl outline-none">
               {title}
             </h1>
-            <div className="flex -mt-2 ">
-              {tags.map((t) => (
-                <div
-                  key={t.id}
-                  className=" hover:bg-blue-100 rounded px-2 cursor-pointer"
-                >
-                  <span style={{ color: t.color }}>#</span>
-                  {t.title}
-                </div>
-              ))}
-            </div>
+            <p className=" text-sm mb-1">
+              Last Update: {new Intl.DateTimeFormat("en-GB").format(new Date())}
+            </p>
             <div className="preview flex-1 mt-2">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
@@ -692,19 +448,19 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
               postOptionsOpen ? "scale-100" : "scale-0"
             }`}
           >
-            <p className=" font-semibold">Post options</p>
+            <p className=" font-semibold">Page options</p>
             <p className=" font-medium text-sm text-gray-900 mt-4">Slug</p>
             <p className=" text-xs">
-              This will be the url path of the post. The URL structure will be
+              This will be the url path of the page. The URL structure will be
               something like
               <span className=" text-gray-700 italic">
                 {" "}
-                https://blog.tajultonim.ml/[slug]
+                https://blog.tajultonim.ml/p/[slug]
               </span>
             </p>
             <input
               className=" border text-sm w-full outline-blue-500 p-1 mt-2 px-3 rounded"
-              placeholder="your-post-slug"
+              placeholder="your-page-slug"
               value={slug}
               onChange={(e) => {
                 setSlug(e.target.value);
@@ -714,7 +470,7 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
               Description
             </p>
             <p className=" text-xs">
-              This will be the meta description of the post. In html it will
+              This will be the meta description of the page. In html it will
               render something like
               <span className=" text-gray-700 italic">
                 {` <meta name="description" content="YOUR_DESCRIPTION" />`}
@@ -739,43 +495,9 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
               Done
             </button>
           </div>
-
-          <button className=" text-sm px-3  py-[0.4rem] hover:bg-blue-100 rounded-md hover:text-blue-700">
-            Revert new changes
-          </button>
         </div>
       </DashboardLayout>
     </>
-  );
-};
-
-const Tag: FC<{
-  tag: TagType;
-  tags: TagType[];
-  setTags: Dispatch<SetStateAction<TagType[]>>;
-}> = (props) => {
-  return (
-    <div className=" -mt-5 rounded-lg items-center flex text-sm pr-1 py-[2px] pl-2 mr-2  bg-blue-100">
-      <span style={{ color: props.tag.color }}>#</span> {props.tag.title}
-      <span
-        onClick={() => {
-          props.setTags((prev) => {
-            localStorageUpdate(
-              "tags",
-              prev.filter((t) => {
-                return t.id !== props.tag.id;
-              })
-            );
-            return prev.filter((t) => {
-              return t.id !== props.tag.id;
-            });
-          });
-        }}
-        className=" ml-[2px] text-gray-400 hover:text-black cursor-pointer"
-      >
-        <RiCloseLine />
-      </span>
-    </div>
   );
 };
 
@@ -857,19 +579,10 @@ function addLink(textarea: HTMLTextAreaElement, setContent: any) {
 }
 
 function localStorageUpdate(key: string, value: any) {
-  let prev = JSON.parse(localStorage.getItem("draft") || "{}");
+  let prev = JSON.parse(localStorage.getItem("draft-page") || "{}");
   prev[key] = value;
   prev["updatedAt"] = new Date().getTime();
-  localStorage.setItem("draft", JSON.stringify(prev));
+  localStorage.setItem("draft-page", JSON.stringify(prev));
 }
-
-export const getStaticProps: GetStaticProps = async () => {
-  let tagsres = await supabase.from("tags").select("*");
-  return {
-    props: {
-      alltags: tagsres.data,
-    },
-  };
-};
 
 export default New;

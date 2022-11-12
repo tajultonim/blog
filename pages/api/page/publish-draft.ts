@@ -20,54 +20,54 @@ export default async function handler(
 
     let token = req.cookies["access_token"] as string;
     let verres = await verifier(token);
-    if (verres.status != "success" || !verres.payload?.claims?.id) {
+    if (verres.status != "success" || !verres.payload?.claims?.admin) {
       return res.status(401).json({ message: "Invalid token!" });
     }
 
-    let opres = await supabase
-      .from("posts")
-      .select("*,tags(title)")
-      .eq("author_id", verres.payload.claims.id)
+    let opage = await supabase
+      .from("pages")
+      .select("*")
       .eq("id", body.id)
       .single();
 
-    let opost = opres.data;
-    if (opost.author_id != verres.payload?.claims?.id) {
-      return res.status(401).json({ message: "Not authorized!" });
+    if (opage.error || !opage.data) {
+      console.log(opage.error);
+      return res
+        .status(500)
+        .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
-    let np = {
-      title: opost.draft_title.replace(/(\r\n|\n|\r)/gm, ""),
-      content: opost.draft_content,
-      cover: opost.draft_cover,
-      slug: opost.draft_slug,
-      description: opost.draft_description.replace(/(\r\n|\n|\r)/gm, ""),
-      draft_content: null,
-      draft_title: null,
-      draft_cover: null,
+
+    let npage = {
       draft_slug: null,
+      draft_title: null,
       draft_description: null,
+      draft_content: null,
+      slug: opage.data.draft_slug,
+      title: opage.data.draft_title,
+      description: opage.data.draft_description,
+      content: opage.data.draft_content,
       edited_at: new Date().toISOString(),
       published_at: new Date().toISOString(),
       hasdraft: false,
       ispublished: true,
     };
-    let npres = await supabase.from("posts").update(np).eq("id", body.id);
 
-    if (opres.error || npres.error) {
-      console.log("operr", opres.error, "nperr", npres);
+    const { data, error } = await supabase
+      .from("pages")
+      .update(npage)
+      .eq("id", body.id)
+      .select("*")
+      .single();
+
+    if (error || !data) {
+      console.log(error);
       return res
         .status(500)
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
 
     try {
-      await res.revalidate("/post/" + opost.draft_slug);
-      await res.revalidate("/");
-      if (opost.tags.length) {
-        opost.tags.forEach(async (t: any) => {
-          await res.revalidate("/t/" + t.title);
-        });
-      }
+      await res.revalidate("/p/" + opage.data.slug);
     } catch (error) {
       console.log(error);
     }
@@ -75,8 +75,8 @@ export default async function handler(
     return res.status(200).json({
       status: "success",
       code: 200,
-      message: "Draft published successfully",
-      data: npres.data,
+      message: "Page published successfully",
+      data,
     });
   } catch (err) {
     console.log(err);

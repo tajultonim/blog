@@ -2,14 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import verifier from "../../../jwt/jwtverifier";
 import supabase from "../../../supabase/init";
 
-interface TagType {
-  id: string;
-  title: string;
-  description: string;
-  cover: string;
-  color: string;
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -22,62 +14,55 @@ export default async function handler(
         .json({ code: 403, status: "error", message: "Method not allowed!" });
     }
 
-    if (!body.content || !body.title || !body.cover || !body.id) {
+    if (
+      !body.content ||
+      !body.title ||
+      !body.slug ||
+      !body.description ||
+      !body.id
+    ) {
+      console.log(body);
       return res.status(400).json({ message: "Bad request!" });
     }
 
     let token = req.cookies["access_token"] as string;
     let verres = await verifier(token);
-    if (verres.status != "success" || !verres.payload?.claims?.id) {
+    if (verres.status != "success" || !verres.payload?.claims?.admin) {
       return res.status(401).json({ message: "Invalid token!" });
     }
-    let npres = await supabase
-      .from("posts")
+
+    const { data, error } = await supabase
+      .from("pages")
       .update({
         draft_content: body.content,
         draft_title: body.title.replace(/(\r\n|\n|\r)/gm, ""),
-        draft_cover: body.cover,
-        draft_slug:
-          body.slug ||
-          body.title
-            .toLowercase()
-            .replace(/[^\w]/g, " ")
-            .replace(/\s\s+/g, " ")
-            .trim()
-            .replace(/ /g, "-"),
-        draft_description:
-          body.description ||
-          body.content.slice(0, 200).replace(/(\r\n|\n|\r)/gm, ""),
+        draft_slug: body.slug,
+        draft_description: body.description.replace(/(\r\n|\n|\r)/gm, ""),
         edited_at: new Date().toISOString(),
         hasdraft: true,
       })
       .eq("id", body.id)
-      .eq("author_id", verres.payload.claims.id)
-      .select();
-    await supabase.from("posts_tags").delete().eq("post_id", npres.data![0].id);
-    if (body.tags.length) {
-      let tres = await supabase.from("posts_tags").upsert(
-        body.tags.slice(0, 4).map((id: string) => {
-          return { post_id: npres.data![0].id, tag_id: id };
-        })
-      );
+      .select("id,slug")
+      .single();
 
-      if (tres.error) {
-        console.log(tres.error);
-      }
-    }
-
-    if (npres.error) {
-      // console.log("nperr", npres);
+    if (error || !data) {
+      console.log(error);
       return res
         .status(500)
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
+
+    try {
+      await res.revalidate("/p/" + data.slug);
+    } catch (error) {
+      console.log(error);
+    }
+
     return res.status(200).json({
       status: "success",
       code: 200,
-      message: "Draft saved successfully",
-      data: npres.data,
+      message: "Page draft saved successfully",
+      data,
     });
   } catch (err) {
     console.log(err);

@@ -389,7 +389,10 @@ export default Post;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    let { data, error } = await supabase.from("posts").select("slug");
+    let { data, error } = await supabase
+      .from("posts")
+      .select("slug")
+      .eq("ispublished", true);
     let paths = data?.map((d) => {
       return { params: d };
     });
@@ -416,14 +419,18 @@ export const getStaticProps: GetStaticProps = async (context) => {
       .select(
         "title,description,content,slug,cover,author(name,display_profile,username,twitter,facebook),created_at,word,tags(title,color)"
       )
-      .eq("slug", context.params?.slug);
-    if (error || !data) {
-      console.log(error);
-      throw new Error(error?.message);
+      .eq("slug", context.params?.slug)
+      .eq("ispublished", true);
+
+    if (error || !data?.length) {
+      return {
+        notFound: true,
+      };
     }
+
     return {
       props: {
-        post: data ? data[0] : {},
+        post: data[0],
       },
     };
   } catch (error) {

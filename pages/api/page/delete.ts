@@ -8,55 +8,49 @@ export default async function handler(
 ) {
   try {
     let body = JSON.parse(req.body);
-    if (req.method != "POST") {
+    if (req.method != "DELETE") {
       return res
         .status(403)
         .json({ code: 403, status: "error", message: "Method not allowed!" });
     }
+
     if (!body.id) {
       return res.status(400).json({ message: "Bad request!" });
     }
 
     let token = req.cookies["access_token"] as string;
     let verres = await verifier(token);
-    if (verres.status != "success" || !verres.payload?.claims?.id) {
+    if (verres.status != "success" || !verres.payload?.claims?.admin) {
       return res.status(401).json({ message: "Invalid token!" });
     }
 
     const { data, error } = await supabase
-      .from("posts")
-      .update({
-        ispublished: false,
-      })
-      .eq("author_id", verres.payload.claims.id)
+      .from("pages")
+      .delete()
       .eq("id", body.id)
-      .select("slug,tags(title)")
+      .select("id,slug,ispublished")
       .single();
 
-    if (error) {
+    if (error || !data) {
       console.log(error);
       return res
         .status(500)
         .json({ status: "error", code: 500, message: "Something went wrong!" });
     }
 
-    try {
-      await res.revalidate("/post/" + data.slug);
-      await res.revalidate("/");
-      let tags: any = data.tags || [];
-      if (tags.length) {
-        tags.forEach(async (t: any) => {
-          await res.revalidate("/t/" + t.title);
-        });
+    if (data.ispublished) {
+      try {
+        await res.revalidate("/p/" + data.slug);
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
 
     return res.status(200).json({
       status: "success",
       code: 200,
-      message: "Post unpublished successfully",
+      message: "Page deleted successfully",
+      data,
     });
   } catch (err) {
     console.log(err);
