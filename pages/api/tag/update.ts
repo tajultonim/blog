@@ -43,6 +43,7 @@ export default async function handler(
           cover: body.cover,
           description: body.description,
           color: body.color,
+          created_at: new Date().toISOString(),
         },
       ])
       .eq("id", body.id);

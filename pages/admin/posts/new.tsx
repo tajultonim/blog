@@ -1,4 +1,4 @@
-import { NextPage, GetStaticProps } from "next";
+import { NextPage, GetServerSideProps } from "next";
 import Head from "next/head";
 import DashboardLayout from "../../../components/Layout/DashboardLayout";
 import {
@@ -476,7 +476,7 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
                         </span>
                         {t.title}
                       </div>
-                      <div className="">{t.description}</div>
+                      <div className=" line-clamp-2">{t.description}</div>
                     </div>
                   ))}
                 </div>
@@ -863,7 +863,7 @@ function localStorageUpdate(key: string, value: any) {
   localStorage.setItem("draft", JSON.stringify(prev));
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   let tagsres = await supabase.from("tags").select("*");
   return {
     props: {

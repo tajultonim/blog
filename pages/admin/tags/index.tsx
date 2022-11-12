@@ -33,7 +33,7 @@ const Tags: NextPage<Props> = ({ tags }) => {
             </button>
           </Link>
         </div>
-        <div className=" mt-2 grid gap-2">
+        <div className=" mt-2 grid gap-2 overflow-y-scroll scrollbar scrollbar-w-thin ">
           {tags.map((t) => (
             <Tag
               key={t.id}
@@ -53,11 +53,11 @@ const Tags: NextPage<Props> = ({ tags }) => {
 const Tag = ({ title, description, cover, id, color }: TagType) => {
   return (
     <>
-      <div className=" mt-2 flex overflow-hidden w-full bg-white rounded items-center p-2 hover:shadow-sm hover:bg-blue-50 cursor-pointer relative group">
+      <div className=" mt-2 flex w-full bg-white rounded items-center p-2 hover:shadow-sm hover:bg-blue-50 cursor-pointer relative group">
         <Link href={"/admin/tags/edit/" + id}>
           <FaEdit className="absolute z-10 top-2 right-2 text-gray-400 opacity-0 group-hover:opacity-100 duration-100 hover:text-gray-700" />
         </Link>
-        <div className="relative h-20 aspect-square">
+        <div className="relative h-20 w-20">
           <Image
             alt=""
             className="rounded"
