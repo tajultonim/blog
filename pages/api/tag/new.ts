@@ -37,6 +37,13 @@ export default async function handler(
         color: body.color,
       },
     ]);
+
+    try {
+      await res.revalidate("/t/" + body.title);
+    } catch (err) {
+      console.log(err);
+    }
+
     if (error) {
       console.log(error);
       return res
