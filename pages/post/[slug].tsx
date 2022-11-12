@@ -110,7 +110,10 @@ const Post: NextPage<Props> = ({ post }) => {
         />
         <meta property="og:image" content={post.cover} />
         <meta property="og:image:secure_url" content={post.cover} />
-        <meta property="og:url" content={pageUrl} />
+        <meta
+          property="og:url"
+          content={"https://" + process.env.SITE_URL + "/" + post.slug}
+        />
         <meta property="og:type" content="article" />
         <meta property="og:image:alt" content={post.title} />
         <meta
