@@ -6,7 +6,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   res.setHeader("Content-Type", "text/xml");
-  res.setHeader("Cache-Control", "s-maxage=86400");
+  res.setHeader("Cache-Control", "s-maxage=600");
   res.statusCode = 200;
   let postres = await supabase
     .from("posts")

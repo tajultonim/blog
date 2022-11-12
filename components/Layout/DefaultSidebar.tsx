@@ -33,7 +33,7 @@ const Sidebar: FC<{ tags?: TagType[] }> = ({ tags }) => {
       <SidebarOption
         Icon={FcVoicePresentation}
         title="Contact"
-        dest="/contact"
+        dest="/p/contact"
       />
       <SidebarOption
         Icon={FcPrivacy}
