@@ -89,6 +89,10 @@ const Post: NextPage<Props> = ({ post }) => {
           name="description"
           content={post.description.replace(/(\r\n|\n|\r)/gm, "")}
         />
+        <link
+          rel="canonical"
+          href={"https://" + process.env.SITE_URL + "/post/" + post.slug}
+        />
 
         {/* twitter */}
 

@@ -65,6 +65,7 @@ const Home: NextPage<Props> = ({ posts, tags }) => {
           name="facebook-domain-verification"
           content="17feoonrfhqenwtfaw98urwul9b813"
         />
+        <link rel="canonical" href={"https://"+process.env.SITE_URL} />
       </Head>
       <style>{styletxt}</style>
       <Layout

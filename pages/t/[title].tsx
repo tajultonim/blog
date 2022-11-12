@@ -51,6 +51,10 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
     <>
       <Head>
         <title>{`${data.title} - TajulTonim`}</title>
+        <link
+          rel="canonical"
+          href={"https://" + process.env.SITE_URL + "/t/" + data.title}
+        />
       </Head>
       <style>{stylestr}</style>
       <Layout

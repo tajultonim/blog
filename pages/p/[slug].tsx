@@ -24,6 +24,10 @@ const Page: NextPage<{ page: PageType }> = ({ page }) => {
       <Header fixed={true} />
       <Head>
         <title>{`${page.title} - TajulTonim`}</title>
+        <link
+          rel="canonical"
+          href={"https://" + process.env.SITE_URL + "/p/" + page.slug}
+        />
       </Head>
       <div className="flex w-full justify-center mt-14 ">
         <div className="container max-w-4xl mx-2 ">

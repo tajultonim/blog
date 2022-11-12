@@ -61,6 +61,7 @@ const Search: NextPage = () => {
     <>
       <Head>
         <title>{queryText + "-Search"}</title>
+        <link rel="canonical" href={"https://" + process.env.SITE_URL} />
       </Head>
       <Header fixed={true} />
       <div className="flex w-full justify-center mt-14 ">
