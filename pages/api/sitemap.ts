@@ -43,7 +43,7 @@ export default async function handler(
   pageres.data?.forEach((page) => {
     xml += `
     <url>
-        <loc>https://${process.env.SITE_URL + "/post/" + page.slug}</loc>
+        <loc>https://${process.env.SITE_URL + "/p/" + page.slug}</loc>
         <lastmod>${
           page.edited_at
             ? new Date(page.edited_at).toISOString()
