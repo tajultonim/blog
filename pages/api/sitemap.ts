@@ -6,6 +6,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   res.setHeader("Content-Type", "text/xml");
+  res.setHeader("Cache-Control", "s-maxage=86400");
   res.statusCode = 200;
   let postres = await supabase
     .from("posts")
@@ -16,7 +17,9 @@ export default async function handler(
     .from("pages")
     .select("slug,edited_at,created_at")
     .eq("ispublished", true);
-  let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://${process.env.SITE_URL}</loc><lastmod>${new Date().toISOString()}</lastmod></url>`;
+  let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://${
+    process.env.SITE_URL
+  }</loc><lastmod>${new Date().toISOString()}</lastmod></url>`;
   postres.data?.forEach((post) => {
     xml += `
     <url>

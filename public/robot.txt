@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /admin
 
-Sitemap: https://blog.tajultonim.ml/sitemap.xml
+Sitemap: https://tonim.ml/sitemap.xml
