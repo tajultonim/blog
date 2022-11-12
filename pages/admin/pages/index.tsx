@@ -69,7 +69,8 @@ const Page = ({ title, description, id }: PageType) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   let { data, error } = await supabase
     .from("pages")
-    .select("title,description,id");
+    .select("title,description,id")
+    .order("title", { ascending: true });
   return {
     props: {
       pages: data || [],
