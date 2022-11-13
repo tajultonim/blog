@@ -7,6 +7,7 @@ export default async function handler(
 ) {
   res.setHeader("Content-Type", "text/xml");
   res.setHeader("Cache-Control", "s-maxage=600");
+  let SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
   res.statusCode = 200;
   let postres = await supabase
     .from("posts")
@@ -17,13 +18,11 @@ export default async function handler(
     .from("pages")
     .select("slug,edited_at,created_at")
     .eq("ispublished", true);
-  let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://${
-    process.env.SITE_URL
-  }</loc><lastmod>${new Date().toISOString()}</lastmod></url>`;
+  let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://${SITE_URL}</loc><lastmod>${new Date().toISOString()}</lastmod></url>`;
   postres.data?.forEach((post) => {
     xml += `
     <url>
-        <loc>https://${process.env.SITE_URL + "/post/" + post.slug}</loc>
+        <loc>https://${SITE_URL + "/post/" + post.slug}</loc>
         <lastmod>${
           post.edited_at
             ? new Date(post.edited_at).toISOString()
@@ -35,7 +34,7 @@ export default async function handler(
   tagres.data?.forEach((tag) => {
     xml += `
     <url>
-        <loc>https://${process.env.SITE_URL + "/t/" + tag.title}</loc>
+        <loc>https://${SITE_URL + "/t/" + tag.title}</loc>
         <lastmod>${new Date(tag.created_at).toISOString()}</lastmod>
     </url>`;
   });
@@ -43,7 +42,7 @@ export default async function handler(
   pageres.data?.forEach((page) => {
     xml += `
     <url>
-        <loc>https://${process.env.SITE_URL + "/p/" + page.slug}</loc>
+        <loc>https://${SITE_URL + "/p/" + page.slug}</loc>
         <lastmod>${
           page.edited_at
             ? new Date(page.edited_at).toISOString()
