@@ -100,25 +100,21 @@ const Home: NextPage<Props> = ({ posts, tags }) => {
 
 const Post = ({ data, i }: { data: PostType; i: number }) => {
   let secs = Math.round(
-    (new Date().getTime() - new Date(data.created_at).getTime()) / 1000
+    (new Date().getTime() - new Date(data.created_at).getTime()) / 1000 / 60
   );
-  let dur: RelativeTimeFormatUnit = "seconds";
+  let dur: RelativeTimeFormatUnit = "minutes";
   if (secs >= 60) {
     secs = Math.round(secs / 60);
-    dur = secs == 1 ? "minute" : "minutes";
-    if (secs >= 60) {
-      secs = Math.round(secs / 60);
-      dur = secs == 1 ? "hour" : "hours";
-      if (secs >= 24) {
-        secs = Math.round(secs / 24);
-        dur = secs == 1 ? "day" : "days";
-        if (secs >= 30) {
-          secs = Math.round(secs / 30);
-          dur = secs == 1 ? "month" : "months";
-          if (secs >= 12) {
-            secs = Math.round(secs / 12);
-            dur = secs == 1 ? "year" : "years";
-          }
+    dur = secs == 1 ? "hour" : "hours";
+    if (secs >= 24) {
+      secs = Math.round(secs / 24);
+      dur = secs == 1 ? "day" : "days";
+      if (secs >= 30) {
+        secs = Math.round(secs / 30);
+        dur = secs == 1 ? "month" : "months";
+        if (secs >= 12) {
+          secs = Math.round(secs / 12);
+          dur = secs == 1 ? "year" : "years";
         }
       }
     }

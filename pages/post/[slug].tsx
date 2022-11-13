@@ -17,6 +17,7 @@ import {
 } from "react-icons/ri";
 const theme: any = atomDark;
 import { useEffect, useState } from "react";
+const keyword_extractor = require("keyword-extractor");
 
 interface Props {
   post: PostType;
@@ -30,6 +31,7 @@ interface PostType {
   cover: string;
   word: number;
   created_at: string;
+  published_at: string;
   author: {
     name: string;
     display_profile: string;
@@ -93,6 +95,17 @@ const Post: NextPage<Props> = ({ post }) => {
           rel="canonical"
           href={"https://" + process.env.SITE_URL + "/post/" + post.slug}
         />
+        <meta
+          name="keywords"
+          content={keyword_extractor
+            .extract(post.description, {
+              language: "english",
+              remove_digits: true,
+              return_changed_case: true,
+              remove_duplicates: true,
+            })
+            .join(",")}
+        />
 
         {/* twitter */}
 
@@ -127,6 +140,43 @@ const Post: NextPage<Props> = ({ post }) => {
         <meta property="article:author" content={post.author.facebook} />
         <meta property="og:site_name" content="TajulTonim Blog" />
         <meta property="fb:app_id" content="531198521796306" />
+
+        <script type="application/ld+json">
+          {`
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              headline: "${post.title}",
+              about: "${post.description}"
+              image: [
+                ${post.cover}
+              ],
+              datePublished: "${new Date(post.created_at).toISOString()}",
+              dateModified: "${new Date(post.published_at).toISOString()}",
+              author: [
+                {
+                  "@type": "Person",
+                  name: "${post.author.name}",
+                  url: "https://${
+                    process.env.SITE_URL + "/author/" + post.author.username
+                  }",
+                }
+              ],
+              "publisher":[
+                {
+                  "name": "TajulTonim blog",
+                  "url": "https://${process.env.SITE_URL}"
+                },
+              ]
+              “mainEntityOfPage”: {
+                “@type”: “WebPage”,
+                “@id”: “https://${process.env.SITE_URL}/post/${post.slug}”
+              },
+              “logo”: {
+                “@type”: “ImageObject”,
+                “url”: “https://${process.env.SITE_URL}/favicon.ico”
+              }
+            `}
+        </script>
       </Head>
 
       <PostLayout
@@ -424,7 +474,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     let { data, error } = await supabase
       .from("posts")
       .select(
-        "title,description,content,slug,cover,author(name,display_profile,username,twitter,facebook),created_at,word,tags(title,color)"
+        "title,description,content,slug,cover,author(name,display_profile,username,twitter,facebook),created_at,published_at,word,tags(title,color)"
       )
       .eq("slug", context.params?.slug)
       .eq("ispublished", true);
