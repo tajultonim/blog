@@ -330,7 +330,7 @@ const Id: NextPage<{ post: Post; alltags: TagType[] }> = ({
       setIsDeleting(false);
       localStorage.removeItem(post.id);
       console.log(res);
-      router.reload();
+      router.push("/admin/posts");
     } catch (error) {
       setIsDeleting(false);
       console.log(error);

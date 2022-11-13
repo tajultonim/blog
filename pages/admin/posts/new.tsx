@@ -216,6 +216,10 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
         body: JSON.stringify(post),
       }).then((r) => r.json());
       setIsPublishing(false);
+      if (res.code != 200) {
+        return console.log(res);
+      }
+
       localStorage.setItem("draft", "{}");
       console.log(res);
       router.push("/admin/posts");
@@ -241,6 +245,9 @@ const New: NextPage<{ alltags: TagType[] }> = ({ alltags }) => {
         body: JSON.stringify(post),
       }).then((r) => r.json());
       setIsSavingDraft(false);
+      if (res.code != 200) {
+        return console.log(res);
+      }
       localStorage.setItem("draft", "{}");
       console.log(res);
       router.push("/admin/posts");
