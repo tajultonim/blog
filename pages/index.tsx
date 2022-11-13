@@ -1,5 +1,5 @@
 import { NextPage, GetStaticProps } from "next";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import DefaultSidebar from "../components/Layout/DefaultSidebar";
 import supabase from "../supabase/init";
@@ -125,15 +125,16 @@ const Post = ({ data, i }: { data: PostType; i: number }) => {
     new Date(data.created_at).getTime()
   );
 
-  let postedAt =
+  const [posted_at, setPosted_at] = useState(
     month +
-    " " +
-    new Date(data.created_at).getDate() +
-    " (" +
-    new Intl.RelativeTimeFormat("en", {
-      numeric: "auto",
-    }).format(-secs, dur) +
-    ")";
+      " " +
+      new Date(data.created_at).getDate() +
+      " (" +
+      new Intl.RelativeTimeFormat("en", {
+        numeric: "auto",
+      }).format(-secs, dur) +
+      ")"
+  );
 
   return (
     <div className="border bg-white rounded-md w-full">
@@ -172,7 +173,9 @@ const Post = ({ data, i }: { data: PostType; i: number }) => {
                 </h3>
               </Link>
 
-              <div className=" text-gray-900 -mt-[2px] text-xs">{postedAt}</div>
+              <div className=" text-gray-900 -mt-[2px] text-xs">
+                {posted_at}
+              </div>
             </div>
           </div>
           <Link href={"/post/" + data.slug}>

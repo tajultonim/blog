@@ -101,7 +101,7 @@ const Post: NextPage<Props> = ({ post }) => {
               return_changed_case: true,
               remove_duplicates: true,
             })
-            .join(",")}
+            .join(", ")}
         />
 
         {/* twitter */}
@@ -142,18 +142,18 @@ const Post: NextPage<Props> = ({ post }) => {
           {`{
               "@context": "https://schema.org",
               "@type": "BlogPosting",
-              headline: "${post.title}",
-              about: "${post.description}"
-              image: [
-                ${post.cover}
+              "headline": "${post.title}",
+              "about": "${post.description}"
+              "image": [
+                "${post.cover}"
               ],
-              datePublished: "${new Date(post.created_at).toISOString()}",
-              dateModified: "${new Date(post.published_at).toISOString()}",
-              author: [
+              "datePublished": "${new Date(post.created_at).toISOString()}",
+              "dateModified": "${new Date(post.published_at).toISOString()}",
+              "author": [
                 {
                   "@type": "Person",
-                  name: "${post.author.name}",
-                  url: "https://${
+                  "name": "${post.author.name}",
+                  "url": "https://${
                     SITE_URL + "/author/" + post.author.username
                   }",
                 }
@@ -164,13 +164,13 @@ const Post: NextPage<Props> = ({ post }) => {
                   "url": "https://${SITE_URL}"
                 },
               ]
-              “mainEntityOfPage”: {
-                “@type”: “WebPage”,
-                “@id”: “https://${SITE_URL}/post/${post.slug}”
+              "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://${SITE_URL}/post/${post.slug}"
               },
-              “logo”: {
-                “@type”: “ImageObject”,
-                “url”: “https://${SITE_URL}/favicon.ico”
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://${SITE_URL}/favicon.ico"
               }
             }`}
         </script>
