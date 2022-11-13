@@ -33,6 +33,7 @@ interface PostType {
 type RelativeTimeFormatUnit = any;
 
 const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
+  let SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
   let ptsarr = data.posts.map((p) => p.tags).flat(1);
   ptsarr = ptsarr.filter(function (item, pos) {
     return ptsarr.indexOf(item) == pos;
@@ -53,7 +54,7 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
         <title>{`${data.title} - TajulTonim`}</title>
         <link
           rel="canonical"
-          href={"https://" + process.env.SITE_URL + "/t/" + data.title}
+          href={"https://" + SITE_URL + "/t/" + data.title}
         />
       </Head>
       <style>{stylestr}</style>

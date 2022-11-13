@@ -45,9 +45,7 @@ interface PostType {
 const Post: NextPage<Props> = ({ post }) => {
   const [isSharebaropen, setIsSharebaropen] = useState(false);
   const [marked, setMarked] = useState(false);
-  const [pageUrl, setPageUrl] = useState(
-    process.env.VERCEL_URL ? process.env.VERCEL_URL + "/" + post.slug : ""
-  );
+  let SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
   let secs = Math.round(
     (new Date().getTime() - new Date(post.created_at).getTime()) / 1000
   );
@@ -78,7 +76,6 @@ const Post: NextPage<Props> = ({ post }) => {
   }).format(-secs, dur);
 
   useEffect(() => {
-    setPageUrl(location.href);
     let bmarked = JSON.stringify(localStorage.getItem("marked") || "[]");
     setMarked(bmarked.includes(post.slug));
   }, [post.slug]);
@@ -93,7 +90,7 @@ const Post: NextPage<Props> = ({ post }) => {
         />
         <link
           rel="canonical"
-          href={"https://" + process.env.SITE_URL + "/post/" + post.slug}
+          href={"https://" + SITE_URL + "/post/" + post.slug}
         />
         <meta
           name="keywords"
@@ -129,7 +126,7 @@ const Post: NextPage<Props> = ({ post }) => {
         <meta property="og:image:secure_url" content={post.cover} />
         <meta
           property="og:url"
-          content={"https://" + process.env.SITE_URL + "/p/" + post.slug}
+          content={"https://" + SITE_URL + "/p/" + post.slug}
         />
         <meta property="og:type" content="article" />
         <meta property="og:image:alt" content={post.title} />
@@ -142,7 +139,7 @@ const Post: NextPage<Props> = ({ post }) => {
         <meta property="fb:app_id" content="531198521796306" />
 
         <script type="application/ld+json">
-          {`
+          {`{
               "@context": "https://schema.org",
               "@type": "BlogPosting",
               headline: "${post.title}",
@@ -157,25 +154,25 @@ const Post: NextPage<Props> = ({ post }) => {
                   "@type": "Person",
                   name: "${post.author.name}",
                   url: "https://${
-                    process.env.SITE_URL + "/author/" + post.author.username
+                    SITE_URL + "/author/" + post.author.username
                   }",
                 }
               ],
               "publisher":[
                 {
                   "name": "TajulTonim blog",
-                  "url": "https://${process.env.SITE_URL}"
+                  "url": "https://${SITE_URL}"
                 },
               ]
               “mainEntityOfPage”: {
                 “@type”: “WebPage”,
-                “@id”: “https://${process.env.SITE_URL}/post/${post.slug}”
+                “@id”: “https://${SITE_URL}/post/${post.slug}”
               },
               “logo”: {
                 “@type”: “ImageObject”,
-                “url”: “https://${process.env.SITE_URL}/favicon.ico”
+                “url”: “https://${SITE_URL}/favicon.ico”
               }
-            `}
+            }`}
         </script>
       </Head>
 
@@ -248,22 +245,27 @@ const Post: NextPage<Props> = ({ post }) => {
                   </p> */}
                     <Link
                       target="_blank"
+                      legacyBehavior
                       rel="nofollow noindex"
                       href={`https://twitter.com/intent/tweet?text="${encodeURIComponent(
                         post.title
                       )}" by @${encodeURIComponent(
                         post.author.twitter
-                      )} %23TajulsBlog ${pageUrl}`}
+                      )} %23TajulsBlog ${
+                        "https://" + SITE_URL + "/post/" + post.slug
+                      }`}
                     >
-                      <div className="flex p-1 py-2 text-gray-900 cursor-pointer hover:text-blue-800 items-center w-48 justify-between">
-                        <p className="">Share to Twitter</p>
-                      </div>
+                      <a>
+                        <div className="flex p-1 py-2 text-gray-900 cursor-pointer hover:text-blue-800 items-center w-48 justify-between">
+                          <p className="">Share to Twitter</p>
+                        </div>
+                      </a>
                     </Link>
                     <Link
                       target="_blank"
                       rel="nofollow noindex"
                       href={`https://www.facebook.com/sharer.php?u=${encodeURIComponent(
-                        pageUrl
+                        "https://" + SITE_URL + "/post/" + post.slug
                       )}`}
                     >
                       <div className="flex p-1 py-2 text-gray-900 cursor-pointer hover:text-blue-800 items-center w-48 justify-between">
@@ -272,7 +274,7 @@ const Post: NextPage<Props> = ({ post }) => {
                     </Link>
                     <Link
                       href={`https://www.reddit.com/submit?url=${encodeURIComponent(
-                        pageUrl
+                        "https://" + SITE_URL + "/post/" + post.slug
                       )}&title=${encodeURIComponent(
                         '"' + post.title + '" by ' + post.author.name
                       )}`}
@@ -283,7 +285,7 @@ const Post: NextPage<Props> = ({ post }) => {
                     </Link>
                     <Link
                       href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                        pageUrl
+                        "https://" + SITE_URL + "/post/" + post.slug
                       )}`}
                     >
                       <div className="flex p-1 py-2 text-gray-900 cursor-pointer hover:text-blue-800 items-center w-48 justify-between">
@@ -292,7 +294,7 @@ const Post: NextPage<Props> = ({ post }) => {
                     </Link>
                     <Link
                       href={`https://news.ycombinator.com/submitlink?u=${encodeURIComponent(
-                        pageUrl
+                        "https://" + SITE_URL + "/post/" + post.slug
                       )}&t=${encodeURIComponent(
                         '"' + post.title + '" by ' + post.author.name
                       )}`}
@@ -305,7 +307,7 @@ const Post: NextPage<Props> = ({ post }) => {
                     <div
                       onClick={() => {
                         navigator.share({
-                          url: pageUrl,
+                          url: "https://" + SITE_URL + "/post/" + post.slug,
                           title: post.title,
                           text: "Read " + post.title + "by" + post.author.name,
                         });
@@ -331,6 +333,7 @@ const Post: NextPage<Props> = ({ post }) => {
                 objectFit="cover"
                 layout="fill"
                 alt=""
+                priority={true}
               />
             </div>
           )}

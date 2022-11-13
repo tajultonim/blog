@@ -46,6 +46,7 @@ interface PostType {
 type RelativeTimeFormatUnit = any;
 
 const Home: NextPage<Props> = ({ posts, tags }) => {
+  let SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
   let styletxt = "";
   tags.forEach((tag) => {
     styletxt += `.tag-${tag.title} span{
@@ -65,9 +66,9 @@ const Home: NextPage<Props> = ({ posts, tags }) => {
           name="facebook-domain-verification"
           content="17feoonrfhqenwtfaw98urwul9b813"
         />
-        <link rel="canonical" href={"https://" + process.env.SITE_URL} />
+        <link rel="canonical" href={"https://" + SITE_URL} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={"https://" + process.env.SITE_URL} />
+        <meta property="og:url" content={"https://" + SITE_URL} />
         <meta property="og:image" content="https://tonim.ml/favicon.ico" />
         <meta property="og:site_name" content="TajulTonim Blog" />
         <meta name="twitter:site" content="@tajultonim" />
@@ -142,7 +143,6 @@ const Post = ({ data, i }: { data: PostType; i: number }) => {
             <Image
               alt={data.title}
               src={data.cover}
-              sizes=""
               layout="fill"
               objectFit="cover"
               className=" rounded-t"

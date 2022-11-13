@@ -18,6 +18,7 @@ import Link from "next/link";
 const theme: any = atomDark;
 
 const Page: NextPage<{ data: any }> = ({ data }) => {
+  let SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
   return (
     <>
       <Header fixed={true} />
@@ -25,7 +26,7 @@ const Page: NextPage<{ data: any }> = ({ data }) => {
         <title>{`${data.name} - TajulTonim`}</title>
         <link
           rel="canonical"
-          href={"https://" + process.env.SITE_URL + "/author/" + data.username}
+          href={"https://" + SITE_URL + "/author/" + data.username}
         />
       </Head>
       <div className="flex flex-col w-full items-center mt-14 ">

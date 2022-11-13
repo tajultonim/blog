@@ -19,6 +19,7 @@ interface PageType {
 }
 
 const Page: NextPage<{ page: PageType }> = ({ page }) => {
+  let SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
   return (
     <>
       <Header fixed={true} />
@@ -26,7 +27,7 @@ const Page: NextPage<{ page: PageType }> = ({ page }) => {
         <title>{`${page.title} - TajulTonim`}</title>
         <link
           rel="canonical"
-          href={"https://" + process.env.SITE_URL + "/p/" + page.slug}
+          href={"https://" + SITE_URL + "/p/" + page.slug}
         />
       </Head>
       <div className="flex w-full justify-center mt-14 ">
