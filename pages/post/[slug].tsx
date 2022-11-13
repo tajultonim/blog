@@ -140,39 +140,31 @@ const Post: NextPage<Props> = ({ post }) => {
 
         <script type="application/ld+json">
           {`{
-              "@context": "https://schema.org",
-              "@type": "BlogPosting",
-              "headline": "${post.title}",
-              "about": "${post.description}"
-              "image": [
-                "${post.cover}"
-              ],
-              "datePublished": "${new Date(post.created_at).toISOString()}",
-              "dateModified": "${new Date(post.published_at).toISOString()}",
-              "author": [
-                {
-                  "@type": "Person",
-                  "name": "${post.author.name}",
-                  "url": "https://${
-                    SITE_URL + "/author/" + post.author.username
-                  }",
-                }
-              ],
-              "publisher":[
-                {
-                  "name": "TajulTonim blog",
-                  "url": "https://${SITE_URL}"
-                },
-              ]
-              "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": "https://${SITE_URL}/post/${post.slug}"
-              },
-              "logo": {
-                "@type": "ImageObject",
-                "url": "https://${SITE_URL}/favicon.ico"
-              }
-            }`}
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "${post.title}",
+    "about": "${post.description}",
+    "image": ["${post.cover}"],
+    "datePublished": "${new Date(post.created_at).toISOString()}",
+    "dateModified": "${new Date(post.published_at).toISOString()}",
+    "author": [{
+        "@type": "Person",
+        "name": "${post.author.name}",
+        "url": "https://${SITE_URL}/author/${post.author.username}"
+    }],
+    "publisher": [{
+        "name": "TajulTonim blog",
+        "url": "${SITE_URL}"
+    }],
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://${SITE_URL}/post/${post.slug}"
+    },
+    "logo": {
+        "@type": "ImageObject",
+        "url": "https://${SITE_URL}/favicon.ico"
+    }
+}`}
         </script>
       </Head>
 
