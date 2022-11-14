@@ -45,39 +45,7 @@ interface PostType {
 const Post: NextPage<Props> = ({ post }) => {
   const [isSharebaropen, setIsSharebaropen] = useState(false);
   const [marked, setMarked] = useState(false);
-  const [postedAt, setPostedAt] = useState(getPostedAt(post.created_at));
   let SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
-
-  function getPostedAt(ca: string) {
-    let secs = Math.round(
-      (new Date().getTime() - new Date(ca).getTime()) / 1000
-    );
-    let dur: any = "seconds";
-    if (secs >= 60) {
-      secs = Math.round(secs / 60);
-      dur = secs == 1 ? "minute" : "minutes";
-      if (secs >= 60) {
-        secs = Math.round(secs / 60);
-        dur = secs == 1 ? "hour" : "hours";
-        if (secs >= 24) {
-          secs = Math.round(secs / 24);
-          dur = secs == 1 ? "day" : "days";
-          if (secs >= 30) {
-            secs = Math.round(secs / 30);
-            dur = secs == 1 ? "month" : "months";
-            if (secs >= 12) {
-              secs = Math.round(secs / 12);
-              dur = secs == 1 ? "year" : "years";
-            }
-          }
-        }
-      }
-    }
-
-    return new Intl.RelativeTimeFormat("en", {
-      numeric: "auto",
-    }).format(-secs, dur);
-  }
 
   useEffect(() => {
     let bmarked = JSON.stringify(localStorage.getItem("marked") || "[]");
@@ -352,7 +320,14 @@ const Post: NextPage<Props> = ({ post }) => {
                     {post.author.name}
                   </p>
                 </Link>
-                <p className=" text-xs">{"posted " + postedAt}</p>
+                <p className=" text-xs">
+                  {"posted on " +
+                    new Intl.DateTimeFormat("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    }).format(new Date(post.created_at).getTime())}
+                </p>
               </div>
             </div>
 
