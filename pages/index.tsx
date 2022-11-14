@@ -148,6 +148,7 @@ const Post = ({ data, i }: { data: PostType; i: number }) => {
               objectFit="cover"
               className=" rounded-t"
               priority={i < 2}
+              quality={100}
             />
           </div>
         </Link>
