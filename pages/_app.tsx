@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import Layout from "../components/Layout";
+import Script from "next/script";
 import Head from "next/head";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -13,6 +13,20 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="fb:app_id" content="531198521796306" />
       </Head>
       <Component {...pageProps} />
+      {/* Global site tag (gtag.js) - Google Analytics  */}
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_TRACKING_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', '${process.env.NEXT_PUBLIC_GA_TRACKING_ID}');
+        `}
+      </Script>
     </>
   );
 }

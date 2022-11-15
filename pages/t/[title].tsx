@@ -256,8 +256,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
       )
       .eq("title", context.params?.title);
     if (error || !data) {
-      console.log(error);
-      throw new Error(error?.message);
+      return {
+        notFound: true,
+      };
     }
     return {
       props: {

@@ -107,7 +107,6 @@ const Post: NextPage<Props> = ({ post }) => {
           content={new Date(post.created_at).toISOString()}
         />
         <meta property="article:author" content={post.author.facebook} />
-        
 
         <script
           type="application/ld+json"
