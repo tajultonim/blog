@@ -133,45 +133,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 const Post = ({ data }: { data: PostType }) => {
-  let secs = Math.round(
-    (new Date().getTime() - new Date(data.created_at).getTime()) / 1000
-  );
-  let dur: RelativeTimeFormatUnit = "seconds";
-  // if (secs >= 60) {
-  secs = Math.round(secs / 60);
-  dur = secs == 1 ? "minute" : "minutes";
-  if (secs >= 60) {
-    secs = Math.round(secs / 60);
-    dur = secs == 1 ? "hour" : "hours";
-    if (secs >= 24) {
-      secs = Math.round(secs / 24);
-      dur = secs == 1 ? "day" : "days";
-      if (secs >= 30) {
-        secs = Math.round(secs / 30);
-        dur = secs == 1 ? "month" : "months";
-        if (secs >= 12) {
-          secs = Math.round(secs / 12);
-          dur = secs == 1 ? "year" : "years";
-        }
-      }
-    }
-  }
-  // }
-
-  let month = new Intl.DateTimeFormat("en-GB", { month: "short" }).format(
-    new Date(data.created_at).getTime()
-  );
-
-  let postedAt =
-    month +
-    " " +
-    new Date(data.created_at).getDate() +
-    " (" +
-    new Intl.RelativeTimeFormat("en", {
-      numeric: "auto",
-    }).format(-secs, dur) +
-    ")";
-
   return (
     <div className="border bg-white rounded-md w-full">
       <div className=" flex flex-col w-full">
@@ -197,7 +158,14 @@ const Post = ({ data }: { data: PostType }) => {
                 </h3>
               </Link>
 
-              <div className=" text-gray-900 -mt-[2px] text-xs">{postedAt}</div>
+              <div className=" text-gray-900 -mt-[2px] text-xs">
+                {"posted on " +
+                  new Intl.DateTimeFormat("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }).format(new Date(data.created_at).getTime())}
+              </div>
             </div>
           </div>
           <Link href={"/post/" + data.slug}>
