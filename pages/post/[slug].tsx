@@ -107,8 +107,7 @@ const Post: NextPage<Props> = ({ post }) => {
           content={new Date(post.created_at).toISOString()}
         />
         <meta property="article:author" content={post.author.facebook} />
-        <meta property="og:site_name" content="TajulTonim Blog" />
-        <meta property="fb:app_id" content="531198521796306" />
+        
 
         <script
           type="application/ld+json"
