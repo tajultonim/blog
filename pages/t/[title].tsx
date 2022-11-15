@@ -56,11 +56,14 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
           rel="canonical"
           href={"https://" + SITE_URL + "/t/" + data.title}
         />
+        <meta property="og:image" content={data.cover} />
+        <meta property="og:image:width" content="512" />
+        <meta property="og:image:height" content="512" />
       </Head>
       <style>{stylestr}</style>
       <Layout
         TopBar={
-          <TopBar 
+          <TopBar
             description={data.description}
             cover={data.cover}
             title={data.title}
