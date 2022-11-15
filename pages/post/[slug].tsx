@@ -138,10 +138,6 @@ const Post: NextPage<Props> = ({ post }) => {
                 "@type": "WebPage",
                 "@id": `https://${SITE_URL}/post/${post.slug}`,
               },
-              logo: {
-                "@type": "ImageObject",
-                url: `https://${SITE_URL}/favicon.ico`,
-              },
             }),
           }}
         ></script>
