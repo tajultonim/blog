@@ -131,7 +131,7 @@ const Post: NextPage<Props> = ({ post }) => {
               publisher: [
                 {
                   name: "TajulTonim blog",
-                  url: SITE_URL,
+                  url: `https://${SITE_URL}`,
                 },
               ],
               mainEntityOfPage: {
