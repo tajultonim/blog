@@ -64,8 +64,8 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
         <meta property="og:title" content={`${data.title} - TajulTonim`} />
         <meta property="og:description" content={data.description} />
         <meta property="og:image" content={data.cover} />
-        <meta property="og:image:width" content="512" />
-        <meta property="og:image:height" content="512" />
+        <meta property="og:image:width" content="200" />
+        <meta property="og:image:height" content="200" />
         <meta property="og:image:alt" content={data.title} />
       </Head>
       <style>{stylestr}</style>
