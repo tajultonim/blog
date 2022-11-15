@@ -320,7 +320,7 @@ const Post: NextPage<Props> = ({ post }) => {
                     {post.author.name}
                   </p>
                 </Link>
-                <p className=" text-xs">
+                <p className=" text-xs" suppressHydrationWarning={true}>
                   {"posted on " +
                     new Intl.DateTimeFormat("en-GB", {
                       day: "numeric",
