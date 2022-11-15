@@ -159,12 +159,11 @@ const Post = ({ data }: { data: PostType }) => {
               </Link>
 
               <div className=" text-gray-900 -mt-[2px] text-xs">
-                {"posted on " +
-                  new Intl.DateTimeFormat("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  }).format(new Date(data.created_at).getTime())}
+                {new Intl.DateTimeFormat("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }).format(new Date(data.created_at).getTime())}
               </div>
             </div>
           </div>
