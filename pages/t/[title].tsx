@@ -60,12 +60,13 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
           property="og:url"
           content={"https://" + SITE_URL + "/t/" + data.title}
         />
-        <meta property="og:type" content="website"/>
+        <meta property="og:type" content="website" />
         <meta property="og:title" content={`${data.title} - TajulTonim`} />
         <meta property="og:description" content={data.description} />
         <meta property="og:image" content={data.cover} />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
+        <meta property="og:image:alt" content={data.title} />
       </Head>
       <style>{stylestr}</style>
       <Layout
