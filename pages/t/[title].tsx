@@ -60,7 +60,7 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
       <style>{stylestr}</style>
       <Layout
         TopBar={
-          <TopBar
+          <TopBar 
             description={data.description}
             cover={data.cover}
             title={data.title}
