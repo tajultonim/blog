@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
         <meta property="og:site_name" content="TajulTonim Blog" />
         <meta property="fb:app_id" content="531198521796306" />
-        <Partytown debug={true} forward={["dataLayer.push"]} />
+        <Partytown forward={["dataLayer.push"]} />
       </Head>
       <Component {...pageProps} />
       <Script
