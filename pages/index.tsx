@@ -1,5 +1,5 @@
 import { NextPage, GetStaticProps } from "next";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import Layout from "../components/Layout";
 import DefaultSidebar from "../components/Layout/DefaultSidebar";
 import supabase from "../supabase/init";
@@ -151,6 +151,9 @@ const Post = ({ data, i }: { data: PostType; i: number }) => {
               objectFit="cover"
               className=" rounded-t"
               priority={i < 2}
+              sizes="(max-width: 768px) 100vw,
+              (max-width: 1200px) 50vw,
+              33vw"
             />
           </div>
         </Link>
@@ -164,8 +167,11 @@ const Post = ({ data, i }: { data: PostType; i: number }) => {
                   layout="fill"
                   objectFit="cover"
                   className=" rounded-full"
-                  quality={100}
+                  quality={20}
                   priority={i < 2}
+                  sizes="(max-width: 768px) 10vw,
+                         (max-width: 1200px) 10vw,
+                          10vw"
                 />
               </div>
             </Link>

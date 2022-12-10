@@ -1,7 +1,6 @@
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import Header from "./../components/Header";
-import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/legacy/image";
@@ -21,14 +20,6 @@ interface PostType {
     display_profile: string;
     username: string;
   };
-}
-
-interface TagType {
-  title: string;
-  description: string;
-  cover: string;
-  color: string;
-  posts: PostType[];
 }
 
 type RelativeTimeFormatUnit = any;
