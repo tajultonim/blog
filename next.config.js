@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig = {
   async rewrites() {
     return [
@@ -18,4 +22,4 @@ const nextConfig = {
   images: { domains: ["res.cloudinary.com"] },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);
