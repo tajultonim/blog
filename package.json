@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "partytown": "partytown copylib public/~partytown"
   },
   "dependencies": {
+    "@builder.io/partytown": "^0.7.3",
     "@supabase/supabase-js": "^2.0.5",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@types/node": "18.11.8",
