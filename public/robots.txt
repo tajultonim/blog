@@ -1,4 +1,5 @@
 User-agent: *
-Disallow: /admin
+Allow: /
+Disallow: /admin/
 
 Sitemap: https://tonim.ml/sitemap.xml
