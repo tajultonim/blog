@@ -49,7 +49,6 @@ const Page: NextPage<{ data: any }> = ({ data }) => {
                 />
               </div>
               <h1 className="text-2xl my-3 mt-5 font-black">{data.name}</h1>
-              <div className=" flex w-full justify-center align-center">
               <div className=" w-full mt-2">{data.bio}</div>
               <div className=" w-full my-2 flex gap-3">
                 {data.location && (
@@ -112,7 +111,7 @@ const Page: NextPage<{ data: any }> = ({ data }) => {
                     />
                   )}
                 </div>
-                  </div>
+                
               </div>
             </div>
             <div className=" border-t px-36 pt-6 flex justify-around  gap-2">
