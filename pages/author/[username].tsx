@@ -49,8 +49,8 @@ const Page: NextPage<{ data: any }> = ({ data }) => {
                 />
               </div>
               <h1 className="text-2xl my-3 mt-5 font-black">{data.name}</h1>
-              <div className=" mt-2 px-36">{data.bio}</div>
-              <div className=" my-4 flex gap-3 mb-8">
+              <div className=" w-full mt-2 px-36">{data.bio}</div>
+              <div className=" w-full my-4 flex gap-3 mb-8">
                 {data.location && (
                   <PCard str={data.location} Icon={HiLocationMarker} />
                 )}
@@ -79,6 +79,7 @@ const Page: NextPage<{ data: any }> = ({ data }) => {
                     </div>
                   </Link>
                 )}
+                </div><div className=" w-full my-4 flex gap-3 mb-8">
                 <div className=" flex gap-1">
                   {data.facebook && (
                     <SocialCard
