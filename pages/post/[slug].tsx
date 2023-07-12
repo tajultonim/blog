@@ -107,6 +107,7 @@ const Post: NextPage<Props> = ({ post }) => {
           content={new Date(post.created_at).toISOString()}
         />
         <meta property="article:author" content={post.author.facebook} />
+        <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
 
         <script
           type="application/ld+json"
