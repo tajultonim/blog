@@ -49,7 +49,7 @@ const Page: NextPage<{ data: any }> = ({ data }) => {
                 />
               </div>
               <h1 className="text-2xl my-3 mt-5 font-black">{data.name}</h1>
-              <div className=" w-full mt-2 px-36">{data.bio}</div>
+              <div className=" w-full mt-2">{data.bio}</div>
               <div className=" w-full my-4 flex gap-3 mb-8">
                 {data.location && (
                   <PCard str={data.location} Icon={HiLocationMarker} />
@@ -69,8 +69,7 @@ const Page: NextPage<{ data: any }> = ({ data }) => {
                 )}
                 {data.website_url && (
                   <Link
-                    target="_blank+
-                "
+                    target="_blank"
                     href={data.website_url}
                   >
                     <div className=" h-5 flex text-xs items-center text-gray-600 hover:text-blue-600">
