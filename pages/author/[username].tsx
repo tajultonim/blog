@@ -28,6 +28,7 @@ const Page: NextPage<{ data: any }> = ({ data }) => {
           rel="canonical"
           href={"https://" + SITE_URL + "/author/" + data.username}
         />
+        <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
       </Head>
       <div className="flex flex-col w-full items-center mt-14 ">
         <div
