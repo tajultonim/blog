@@ -67,6 +67,7 @@ const TagPage: NextPage<{ data: TagType }> = ({ data }) => {
         <meta property="og:image:width" content="200" />
         <meta property="og:image:height" content="200" />
         <meta property="og:image:alt" content={data.title} />
+        <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
       </Head>
       <style>{stylestr}</style>
       <Layout
