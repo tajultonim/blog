@@ -29,6 +29,7 @@ const Page: NextPage<{ page: PageType }> = ({ page }) => {
           rel="canonical"
           href={"https://" + SITE_URL + "/p/" + page.slug}
         />
+        <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
       </Head>
       <div className="flex w-full justify-center mt-14 ">
         <div className="container max-w-4xl mx-2 ">
