@@ -83,6 +83,7 @@ const Home: NextPage<Props> = ({ posts, tags }) => {
           name="description"
           content="Hey, it's Tonim. It's my personal blog. I share educational stuff here."
         />
+        <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
       </Head>
       <style>{styletxt}</style>
       <Layout
